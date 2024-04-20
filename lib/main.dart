@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 
 import 'utility_widgets/identity_widget.dart';
 
-final passkeyService = PasskeyOrchestrator(webauthnAPI: WebauthnServer());
+final passkeyService = PasskeyOrchestrator(webauthnAPI: WebauthnServer(host: "http://localhost:9090"));
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
