@@ -1,13 +1,12 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
+import 'package:passkey_demo_frontend/passkey/passkey_orchestrator.dart';
+import 'package:passkey_demo_frontend/server/WebauthnServer.dart';
 import 'package:passkey_demo_frontend/utility_widgets/loading_widget.dart';
 import 'package:provider/provider.dart';
 
-import 'passkey_service.dart';
 import 'utility_widgets/identity_widget.dart';
 
-final passkeyService = PasskeyService();
+final passkeyService = PasskeyOrchestrator(webauthnAPI: WebauthnServer());
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -73,21 +72,19 @@ class _RootWidgetState extends State<RootWidget> {
   }
 
   onSignup() async {
-    var bool = await passkeyService.registerCredential();
+    var user = await passkeyService.enroll();
     print("registration status - $bool");
-    if(bool) {
-      Provider.of<IdentityState>(context, listen: false)
-          .setUser(User(username: "1234"));
+    if (user != null) {
+      Provider.of<IdentityState>(context, listen: false).setUser(user);
     }
   }
 
   onLogin() async {
-    var bool = await passkeyService.login();
+    var user = await passkeyService.authenticate("");
     print("authentication status - $bool");
-    if(bool) {
+    if (user != null) {
       Provider.of<IdentityState>(context, listen: false).setLoggedIn(true);
     }
-
   }
 
   onLogout() {

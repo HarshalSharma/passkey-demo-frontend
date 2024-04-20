@@ -2,7 +2,9 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:js' as js;
+import 'dart:js_util';
 
+import 'package:passkey_demo_frontend/native/entities.dart';
 import 'package:passkey_demo_frontend/native/passkey_native_api.dart';
 
 PasskeyNativeAPI getPasskeyNativeAPIInstance() {
@@ -23,12 +25,12 @@ class PasskeyNativeAPIWeb implements PasskeyNativeAPI {
   }
 
   @override
-  Future<Map<String, dynamic>?> createCredential(options) async {
+  Future<PublicKeyCreationResponse?> createCredential(options) async {
     try {
       if (await isPasskeySupported()) {
         String? response = await _callJS('register', options);
         if (response != null) {
-          return json.decode(response);
+          return PublicKeyCreationResponse.fromJson(json.decode(response));
         }
       }
     } catch (e) {
@@ -39,12 +41,12 @@ class PasskeyNativeAPIWeb implements PasskeyNativeAPI {
   }
 
   @override
-  Future<Map<String, dynamic>?> login(Map<String, dynamic> options) async {
+  Future<PublicKeyAuthNResponse?> login(Map<String, dynamic> options) async {
     try {
       if (await isPasskeySupported()) {
         String? response = await _callJS('login', options);
         if (response != null) {
-          return json.decode(response);
+          return PublicKeyAuthNResponse.fromJson(json.decode(response));
         }
       }
     } catch (e) {
@@ -67,8 +69,9 @@ class PasskeyNativeAPIWeb implements PasskeyNativeAPI {
         }),
         js.allowInterop((error) {
           log("error in dart - ");
-          log(error);
-          completer.completeError(error); // Complete the Future with the error
+          dynamic err = dartify(error);
+          log(err);
+          completer.completeError(err); // Complete the Future with the error
         })
       ]);
     } catch (err) {

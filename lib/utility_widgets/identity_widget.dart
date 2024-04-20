@@ -1,16 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class User {
-  final String username;
-
-  User({required this.username});
-
-  @override
-  String toString() {
-    return username;
-  }
-}
+import '../passkey/user.dart';
 
 class IdentityState with ChangeNotifier {
   User? _user;
@@ -40,7 +31,10 @@ class IdentityButton extends StatefulWidget {
   final Function onSignUp, onLogin, onLogout;
 
   const IdentityButton(
-      {super.key, required this.onSignUp, required this.onLogin, required this.onLogout});
+      {super.key,
+      required this.onSignUp,
+      required this.onLogin,
+      required this.onLogout});
 
   @override
   State<IdentityButton> createState() => _IdentityButtonState();
@@ -77,7 +71,10 @@ class _IdentityButtonState extends State<IdentityButton> {
               ),
               child: const Padding(
                 padding: EdgeInsets.all(16.0),
-                child: Text("LOGIN", style: TextStyle(color: Colors.white),),
+                child: Text(
+                  "LOGIN",
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
             ),
           );
@@ -92,7 +89,10 @@ class _IdentityButtonState extends State<IdentityButton> {
             ),
             child: const Padding(
               padding: EdgeInsets.all(16.0),
-              child: Text("LOGOUT", style: TextStyle(color: Colors.white),),
+              child: Text(
+                "LOGOUT",
+                style: TextStyle(color: Colors.white),
+              ),
             ),
           ),
         );

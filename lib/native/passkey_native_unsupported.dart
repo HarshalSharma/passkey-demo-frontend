@@ -1,3 +1,4 @@
+import 'package:passkey_demo_frontend/native/entities.dart';
 import 'package:passkey_demo_frontend/native/passkey_native_api.dart';
 
 PasskeyNativeAPI getPasskeyNativeAPIInstance() {
@@ -6,19 +7,19 @@ PasskeyNativeAPI getPasskeyNativeAPIInstance() {
 
 class PasskeyNativeUnsupported implements PasskeyNativeAPI {
   @override
-  Future<Map<String, dynamic>?> createCredential(Map<String, dynamic> options) {
+  Future<PublicKeyCreationResponse?> createCredential(
+      Map<String, dynamic> options) {
     // TODO: implement createCredential
     throw UnimplementedError();
   }
 
   @override
   Future<bool> isPasskeySupported() {
-    // TODO: implement isPasskeySupported
-    throw UnimplementedError();
+    return Future.value(false);
   }
 
   @override
-  Future<Map<String, dynamic>?> login(Map<String, dynamic> options) {
+  Future<PublicKeyAuthNResponse?> login(Map<String, dynamic> options) {
     // TODO: implement login
     throw UnimplementedError();
   }
