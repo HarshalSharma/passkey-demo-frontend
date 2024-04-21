@@ -34,6 +34,6 @@ class PublicKeyCredentialRequestOptionsResponse {
   }
 
   static List<PublicKeyCredentialRequestOptionsResponse> listFromJson(List<dynamic> json) {
-    return json.map((value) => new PublicKeyCredentialRequestOptionsResponse.fromJson(value)).toList();
+    return json.map((value) => PublicKeyCredentialRequestOptionsResponse.fromJson(value)).toList();
   }
 }

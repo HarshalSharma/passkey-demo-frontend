@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../passkey/user.dart';
+import '../theme.dart';
 
 class IdentityState with ChangeNotifier {
   User? _user;
@@ -50,9 +51,6 @@ class _IdentityButtonState extends State<IdentityButton> {
             padding: const EdgeInsets.all(8.0),
             child: FilledButton(
               onPressed: () => widget.onSignUp(),
-              style: const ButtonStyle(
-                backgroundColor: MaterialStatePropertyAll<Color>(Colors.white),
-              ),
               child: const Padding(
                 padding: EdgeInsets.all(16.0),
                 child: Text("SIGN UP"),
