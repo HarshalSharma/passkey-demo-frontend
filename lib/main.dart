@@ -1,18 +1,15 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:passkey_demo_frontend/app_constants.dart';
 import 'package:passkey_demo_frontend/passkey/passkey_orchestrator.dart';
 import 'package:passkey_demo_frontend/server/WebauthnServer.dart';
-import 'package:passkey_demo_frontend/ui/utility_widgets/step_widgets.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 import 'app_state.dart';
 import 'ui/setup_backend_widgets.dart';
 import 'ui/simple_demo/simple_demo.dart';
-import 'ui/utility_widgets/loading_widget.dart';
-
-final passkeyService = PasskeyOrchestrator(
-    webauthnAPI: WebauthnServer(host: "http://localhost:9090"));
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,6 +29,9 @@ class RootWidget extends StatefulWidget {
 class _RootWidgetState extends State<RootWidget> {
   @override
   Widget build(BuildContext context) {
+    var webauthnServer = WebauthnServer(context);
+    final passkeyService =
+        PasskeyOrchestrator(webauthnAPI: webauthnServer);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Passkey Demo',
@@ -42,8 +42,8 @@ class _RootWidgetState extends State<RootWidget> {
               children: [
                 Text(
                   "Passkey Demo",
-                  style:
-                      GoogleFonts.roboto(fontWeight: FontWeight.bold, fontSize: 24),
+                  style: GoogleFonts.roboto(
+                      fontWeight: FontWeight.bold, fontSize: 24),
                 ),
               ],
             ),
@@ -67,7 +67,32 @@ class _RootWidgetState extends State<RootWidget> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SetupBackendWidget(),
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text.rich(TextSpan(
+                      text:
+                          "Backend server needs to be running on the docker within your network to be able to use this tool. \n\n"
+                          "Complete source code is available online at - ",
+                      children: [
+                        TextSpan(
+                          text: "https://github.com/HarshalSharma/passkey-demo",
+                          style: TextStyle(
+                              color: AppConstants.theme.colorScheme.secondary),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () async {
+                              const url =
+                                  'https://github.com/HarshalSharma/passkey-demo';
+                              if (await canLaunchUrlString(url)) {
+                                await launchUrlString(url);
+                              }
+                            },
+                        )
+                      ],
+                      // "  docker run -p 8080:8080 harshalworks/passkey-demo-harshalsharma:v1",
+                      style: GoogleFonts.roboto(fontSize: 14),
+                    )),
+                  ),
+                  SetupBackendWidget(webauthnServer: webauthnServer),
                   const Divider(
                     height: 10,
                     thickness: 1,
@@ -90,10 +115,14 @@ class _RootWidgetState extends State<RootWidget> {
                     child: Center(
                       child: Padding(
                         padding: EdgeInsets.all(8.0),
-                        child: Text("2024 | Developed by Harshal Sharma (er.harshalsharma@gmail.com) \n"
-                            "Masters in Software Engineering | BIRLA INSTITUTE OF TECHNOLOGY & SCIENCE, PILANI",
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.jetBrainsMono(fontSize: 12,),),
+                        child: Text(
+                          "2024 | Developed by Harshal Sharma (er.harshalsharma@gmail.com) \n"
+                          "Masters in Software Engineering | BIRLA INSTITUTE OF TECHNOLOGY & SCIENCE, PILANI",
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.jetBrainsMono(
+                            fontSize: 12,
+                          ),
+                        ),
                       ),
                     ),
                   )
@@ -102,14 +131,6 @@ class _RootWidgetState extends State<RootWidget> {
             ),
           )),
     );
-  }
-
-  onLogin() async {
-    var user = await passkeyService.authenticate("");
-    print("authentication status - $bool");
-    if (user != null) {
-      Provider.of<IdentityState>(context, listen: false).setUser(user);
-    }
   }
 
   void resetUser() {

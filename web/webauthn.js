@@ -53,11 +53,11 @@ function register(options, resolve, reject) {
             })
             .catch(function (err) {
                 console.error(err);
-                reject(err);
+                reject(err.toString());
             });
     } catch (err) {
         console.error(err);
-        reject(err);
+        reject(err.toString());
     }
 }
 
@@ -102,10 +102,10 @@ function login(options, resolve, reject) {
             resolve(JSON.stringify(loginResponse));
         }).catch(function (err) {
             console.error(err);
-            reject(err);
+            reject(err.toString());
         });
     } catch (err) {
         console.error(err);
-        reject(err);
+        reject(err.toString());
     }
 }

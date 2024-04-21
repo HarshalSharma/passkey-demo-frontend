@@ -49,7 +49,7 @@ class BasicStep extends StatelessWidget {
 
 class StepButton extends StatelessWidget {
   final String text;
-  final Function onTap;
+  final Function()? onTap;
 
   const StepButton(this.text, {super.key, required this.onTap});
 
@@ -57,11 +57,13 @@ class StepButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       style: ButtonStyle(
-          backgroundColor: MaterialStatePropertyAll<Color>(
-              AppConstants.theme.colorScheme.secondary)),
-      onPressed: () {
-        onTap();
-      },
+          backgroundColor: MaterialStateProperty.resolveWith((states) {
+            if(states.contains(MaterialState.disabled)) {
+              return Colors.grey;
+            }
+            return AppConstants.theme.colorScheme.secondary;
+          })),
+      onPressed: onTap,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Text(
@@ -111,7 +113,7 @@ class StepOutputWidget extends StatelessWidget {
               if (stepOutput.output != null)
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Text(
+                  child: SelectableText(
                     stepOutput.output!,
                     style: GoogleFonts.jetBrainsMono(
                         color: AppConstants.theme.colorScheme.secondary,

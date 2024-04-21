@@ -1,18 +1,22 @@
-import 'package:flutter/gestures.dart';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:passkey_demo_frontend/app_state.dart';
+import 'package:passkey_demo_frontend/server/WebauthnServer.dart';
 import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher_string.dart';
 
 import '../app_constants.dart';
 import 'utility_widgets/loading_widget.dart';
 import 'utility_widgets/step_widgets.dart';
 
 class SetupBackendWidget extends StatelessWidget {
+  final WebauthnServer webauthnServer;
+
   const SetupBackendWidget({
     super.key,
+    required this.webauthnServer,
   });
 
   @override
@@ -26,11 +30,11 @@ class SetupBackendWidget extends StatelessWidget {
             child: Text(
               "CONFIGURE DEMO SERVER",
               style:
-                  GoogleFonts.roboto(fontWeight: FontWeight.bold, fontSize: 14),
+              GoogleFonts.roboto(fontWeight: FontWeight.bold, fontSize: 14),
             ),
           ),
           subtitle:
-              Consumer<ServerState>(builder: (context, serverState, child) {
+          Consumer<ServerState>(builder: (context, serverState, child) {
             return Text(
               "${serverState.serverOrigin}",
               style: GoogleFonts.roboto(fontSize: 14),
@@ -42,31 +46,9 @@ class SetupBackendWidget extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.all(16.0),
-              child: Text.rich(TextSpan(
-                text:
-                    "Backend server needs to be running on the docker within your network to be able to use this tool. \n\n"
-                    "Complete source code is available online at - ",
-                children: [
-                  TextSpan(
-                    text: "https://github.com/HarshalSharma/passkey-demo",
-                    style: TextStyle(
-                        color: AppConstants.theme.colorScheme.secondary),
-                    recognizer: TapGestureRecognizer()
-                      ..onTap = () async {
-                        const url =
-                            'https://github.com/HarshalSharma/passkey-demo';
-                        if (await canLaunchUrlString(url)) {
-                          await launchUrlString(url);
-                        }
-                      },
-                  ),
-                  const TextSpan(
-                      text:
-                          "\n\nJust simply run the command below to get started with the backend server:")
-                ],
-                // "  docker run -p 8080:8080 harshalworks/passkey-demo-harshalsharma:v1",
-                style: GoogleFonts.roboto(fontSize: 14),
-              )),
+              child: Text(
+                  "Run the docker command below to start backend server container :",
+                  style: GoogleFonts.roboto(fontSize: 14)),
             ),
             Padding(
               padding: const EdgeInsets.all(16.0),
@@ -82,7 +64,7 @@ class SetupBackendWidget extends StatelessWidget {
                       padding: const EdgeInsets.all(8.0),
                       child: Text.rich(TextSpan(
                           text:
-                              "docker run -p 8080:8080 harshalworks/passkey-demo-harshalsharma:v1",
+                          "docker run -p 8080:8080 harshalworks/passkey-demo-harshalsharma:v1",
                           style: GoogleFonts.jetBrainsMono(
                               color: AppConstants.theme.colorScheme.secondary),
                           children: [
@@ -93,7 +75,7 @@ class SetupBackendWidget extends StatelessWidget {
                                   Icons.copy,
                                   size: 14,
                                   color:
-                                      AppConstants.theme.colorScheme.secondary,
+                                  AppConstants.theme.colorScheme.secondary,
                                 ),
                               ),
                             )
@@ -105,7 +87,7 @@ class SetupBackendWidget extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: ServerConfigWidget(),
+              child: ServerConfigWidget(webauthnServer: webauthnServer),
             )
           ],
         ));
@@ -114,7 +96,7 @@ class SetupBackendWidget extends StatelessWidget {
   void copyDockerCodeToClipboard(BuildContext context) {
     Clipboard.setData(const ClipboardData(
         text:
-            "docker run -p 8080:8080 harshalworks/passkey-demo-harshalsharma:v1"));
+        "docker run -p 8080:8080 harshalworks/passkey-demo-harshalsharma:v1"));
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         backgroundColor: AppConstants.theme.primaryColor,
@@ -129,7 +111,9 @@ class SetupBackendWidget extends StatelessWidget {
 }
 
 class ServerConfigWidget extends StatefulWidget {
-  const ServerConfigWidget({super.key});
+  final WebauthnServer webauthnServer;
+
+  const ServerConfigWidget({super.key, required this.webauthnServer});
 
   @override
   State<ServerConfigWidget> createState() => _ServerConfigWidgetState();
@@ -148,8 +132,12 @@ class _ServerConfigWidgetState extends State<ServerConfigWidget> {
 
     hostController = TextEditingController();
     portController = TextEditingController();
-    hostController.text = Provider.of<ServerState>(context, listen: false).host;
-    portController.text = Provider.of<ServerState>(context, listen: false).port;
+    hostController.text = Provider
+        .of<ServerState>(context, listen: false)
+        .host;
+    portController.text = Provider
+        .of<ServerState>(context, listen: false)
+        .port;
   }
 
   @override
@@ -258,6 +246,14 @@ class _ServerConfigWidgetState extends State<ServerConfigWidget> {
   }
 
   Future<bool?> testServer() async {
-    return Future.delayed(const Duration(seconds: 1), () => false);
+    try {
+      var result = await widget.webauthnServer.registrationGet();
+      if (result != null) {
+        return true;
+      }
+    } catch (e) { //ignored}
+      return false;
+    }
+    return false;
   }
 }

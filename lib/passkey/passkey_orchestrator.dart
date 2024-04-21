@@ -27,8 +27,7 @@ class PasskeyOrchestrator implements PasskeyService {
     var publicKeyCreationOptions = await webauthnAPI.registrationGet();
 
     if (publicKeyCreationOptions == null) {
-      log("server api didn't created credential options.");
-      return null;
+      throw Exception("server api didn't created credential options.");
     }
 
     /// passes the server options to native api.
@@ -36,8 +35,7 @@ class PasskeyOrchestrator implements PasskeyService {
         getPublicKeyCreationOptions(publicKeyCreationOptions));
 
     if (cred == null) {
-      log("native api didn't created credential");
-      return null;
+      throw Exception("native api didn't created credential");
     }
 
     log("registration successful");
@@ -66,8 +64,7 @@ class PasskeyOrchestrator implements PasskeyService {
         await webauthnAPI.authenticationUserHandleGet(userHandle);
 
     if (publicKeyAuthNOptions == null) {
-      log("server api didn't responded with matching credentials options.");
-      return null;
+      throw Exception("server api didn't responded with matching credentials options.");
     }
 
     var options = getPublicKeyAuthNOptions(publicKeyAuthNOptions);
@@ -78,8 +75,7 @@ class PasskeyOrchestrator implements PasskeyService {
         await _passkeyNativeAPI.login(options);
 
     if (loginResponse == null) {
-      log("native api didn't found credential to authenticate.");
-      return null;
+      throw Exception("native api didn't found credential to authenticate.");
     }
 
     // it is not mandatory to provide credential id in login response, as server would anyway know it.
