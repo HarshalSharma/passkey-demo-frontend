@@ -75,7 +75,7 @@ class StepButton extends StatelessWidget {
 }
 
 class StepOutput {
-  String? timestamp;
+  DateTime? timestamp;
   String? output;
   bool? successful;
 
@@ -92,15 +92,16 @@ class StepOutputWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if(stepOutput.output == null) {
-      return const SizedBox ();
+    if (stepOutput.output == null) {
+      return const SizedBox();
     }
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Padding(
           padding: const EdgeInsets.all(8.0),
-          child: getStatusIcon(),
+          child: StatusIndicatorWidget(successful: stepOutput.successful,),
         ),
         Expanded(
           child: Column(
@@ -121,7 +122,7 @@ class StepOutputWidget extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
-                    stepOutput.timestamp!,
+                    getFormattedTimestamp(),
                     style: GoogleFonts.jetBrainsMono(
                         color: Colors.black, fontSize: 12),
                   ),
@@ -133,14 +134,33 @@ class StepOutputWidget extends StatelessWidget {
     );
   }
 
-  Icon getStatusIcon() {
-    if (stepOutput.successful == true) {
+  String getFormattedTimestamp() {
+    var formattedTimestamp =
+    "${stepOutput.timestamp!.year.toString()}"
+        "-${stepOutput.timestamp!.month.toString().padLeft(2, '0')}"
+        "-${stepOutput.timestamp!.day.toString().padLeft(2, '0')} "
+        "${stepOutput.timestamp!.hour.toString().padLeft(2, '0')}-"
+        "${stepOutput.timestamp!.minute.toString().padLeft(2, '0')}";
+    return formattedTimestamp;
+  }
+}
+
+class StatusIndicatorWidget extends StatelessWidget {
+  final bool? successful;
+
+  const StatusIndicatorWidget({super.key, required this.successful});
+
+  @override
+  Widget build(BuildContext context) {
+    if (successful == true) {
       return Icon(
         Icons.check,
         color: AppConstants.theme.colorScheme.secondary,
       );
+    } else if (successful == false) {
+      return const Icon(Icons.close, color: Colors.red);
     }
-    return const Icon(Icons.close, color: Colors.red);
+    return const SizedBox();
   }
 }
 

@@ -7,6 +7,8 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import '../app_constants.dart';
+import 'utility_widgets/loading_widget.dart';
+import 'utility_widgets/step_widgets.dart';
 
 class SetupBackendWidget extends StatelessWidget {
   const SetupBackendWidget({
@@ -82,8 +84,7 @@ class SetupBackendWidget extends StatelessWidget {
                           text:
                               "docker run -p 8080:8080 harshalworks/passkey-demo-harshalsharma:v1",
                           style: GoogleFonts.jetBrainsMono(
-                              color: AppConstants
-                                  .theme.colorScheme.secondary),
+                              color: AppConstants.theme.colorScheme.secondary),
                           children: [
                             WidgetSpan(
                               child: Padding(
@@ -91,8 +92,8 @@ class SetupBackendWidget extends StatelessWidget {
                                 child: Icon(
                                   Icons.copy,
                                   size: 14,
-                                  color: AppConstants
-                                      .theme.colorScheme.secondary,
+                                  color:
+                                      AppConstants.theme.colorScheme.secondary,
                                 ),
                               ),
                             )
@@ -102,6 +103,10 @@ class SetupBackendWidget extends StatelessWidget {
                 ),
               ),
             ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ServerConfigWidget(),
+            )
           ],
         ));
   }
@@ -120,5 +125,139 @@ class SetupBackendWidget extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class ServerConfigWidget extends StatefulWidget {
+  const ServerConfigWidget({super.key});
+
+  @override
+  State<ServerConfigWidget> createState() => _ServerConfigWidgetState();
+}
+
+class _ServerConfigWidgetState extends State<ServerConfigWidget> {
+  bool? isTested;
+  bool isWaiting = false;
+
+  late TextEditingController hostController;
+  late TextEditingController portController;
+
+  @override
+  void initState() {
+    super.initState();
+
+    hostController = TextEditingController();
+    portController = TextEditingController();
+    hostController.text = Provider.of<ServerState>(context, listen: false).host;
+    portController.text = Provider.of<ServerState>(context, listen: false).port;
+  }
+
+  @override
+  void dispose() {
+    hostController.dispose();
+    portController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Consumer<ServerState>(builder: (context, serverState, child) {
+            return Text(
+              "${serverState.serverOrigin}",
+              style: GoogleFonts.roboto(
+                  fontSize: 18,
+                  color: AppConstants.theme.colorScheme.secondary),
+            );
+          }),
+        ),
+        Row(
+          children: [
+            Expanded(
+              flex: 1,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextField(
+                  controller: hostController,
+                  onChanged: (value) {
+                    setState(() {
+                      if (value.isNotEmpty) {
+                        Provider.of<ServerState>(context, listen: false)
+                            .setHost(value);
+                      }
+                    });
+                  },
+                  decoration: const InputDecoration(
+                    labelText: 'Enter hostname',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+              ),
+            ),
+            Expanded(
+              flex: 1,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: TextField(
+                  controller: portController,
+                  onChanged: (value) {
+                    setState(() {
+                      if (value.isNotEmpty) {
+                        Provider.of<ServerState>(context, listen: false)
+                            .setPort(value);
+                      }
+                    });
+                  },
+                  decoration: const InputDecoration(
+                    labelText: 'Enter port',
+                    border: OutlineInputBorder(),
+                  ),
+                ),
+              ),
+            ),
+            const Expanded(child: SizedBox())
+          ],
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: StepButton("TEST SERVER", onTap: () async {
+            setState(() {
+              isWaiting = true;
+              isTested = null;
+            });
+            bool? result = await testServer();
+            setState(() {
+              isTested = result;
+              isWaiting = false;
+            });
+          }),
+        ),
+        if (isTested != null)
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: StepOutputWidget(
+                stepOutput: StepOutput(
+                    timestamp: DateTime.now(),
+                    successful: isTested!,
+                    output: isTested!
+                        ? "Successfully Connected."
+                        : "Error Connecting Server.")),
+          ),
+        if (isWaiting == true)
+          const Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Loading(),
+          )
+      ],
+    );
+  }
+
+  Future<bool?> testServer() async {
+    return Future.delayed(const Duration(seconds: 1), () => false);
   }
 }

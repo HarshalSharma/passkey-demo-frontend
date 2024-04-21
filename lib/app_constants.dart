@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class AppConstants {
   static ThemeData theme = ThemeData(
-      primaryColor: const Color(0xFF0336FF),
+      primaryColor: const Color(0xFFFFDE03),
       colorScheme: ColorScheme.fromSwatch(
         primarySwatch: Colors.indigo,
         accentColor: const Color(0xFF0336FF),

@@ -1,24 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:passkey_demo_frontend/app_constants.dart';
 import 'package:provider/provider.dart';
-
-class LoadingState with ChangeNotifier {
-
-  bool _isLoading = true;
-
-  bool get isLoading => _isLoading;
-
-  void loading() {
-    _isLoading = true;
-    notifyListeners();
-  }
-
-  void clear() {
-    _isLoading = false;
-    notifyListeners();
-  }
-}
 
 class Loading extends StatelessWidget {
   final Widget? child;
@@ -27,28 +11,21 @@ class Loading extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (context.watch<LoadingState>().isLoading) {
-      return Center(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SpinKitSpinningLines(
-              size: 60,
-              itemCount: 5,
-              color: AppConstants.theme.colorScheme.primary,
-            ),
-            Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Text(
-                "loading",
-                style: TextStyle(color: AppConstants.theme.colorScheme.primary),
-              ),
-            )
-          ],
+    return Row(
+      children: [
+        SpinKitWave(
+          size: 30,
+          itemCount: 5,
+          color: AppConstants.theme.colorScheme.secondary,
         ),
-      );
-    }
-    return child ?? const SizedBox();
+        Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Text(
+            "loading",
+            style: GoogleFonts.jetBrainsMono(color: AppConstants.theme.colorScheme.primary),
+          ),
+        ),
+      ],
+    );
   }
 }

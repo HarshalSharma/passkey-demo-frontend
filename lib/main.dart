@@ -17,7 +17,6 @@ final passkeyService = PasskeyOrchestrator(
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(MultiProvider(providers: [
-    ChangeNotifierProvider(create: (_) => LoadingState()),
     ChangeNotifierProvider(create: (_) => IdentityState()),
     ChangeNotifierProvider(create: (_) => ServerState()),
   ], child: const RootWidget()));

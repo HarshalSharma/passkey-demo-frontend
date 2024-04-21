@@ -92,9 +92,7 @@ class _SimpleDemoState extends State<SimpleDemo> {
                       setState(() {
                         step2.successful = true;
                         step2.output = "It worked";
-                        var now = DateTime.now();
-                        step2.timestamp =
-                            "${now.year.toString()}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')} ${now.hour.toString().padLeft(2, '0')}-${now.minute.toString().padLeft(2, '0')}";
+                        step2.timestamp = DateTime.now();
                       });
                     } else {
                       setState(() {
