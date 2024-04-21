@@ -1,32 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:passkey_demo_frontend/app_state.dart';
 import 'package:provider/provider.dart';
-
-import '../passkey/user.dart';
-import '../theme.dart';
-
-class IdentityState with ChangeNotifier {
-  User? _user;
-  bool _isLoggedIn = false;
-
-  get isLoggedIn => _isLoggedIn;
-
-  get user => _user;
-
-  void setLoggedIn(bool value) {
-    _isLoggedIn = value;
-    notifyListeners();
-  }
-
-  void setUser(User user) {
-    _user = user;
-    notifyListeners();
-  }
-
-  void clearUser() {
-    _user = null;
-    notifyListeners();
-  }
-}
 
 class IdentityButton extends StatefulWidget {
   final Function onSignUp, onLogin, onLogout;

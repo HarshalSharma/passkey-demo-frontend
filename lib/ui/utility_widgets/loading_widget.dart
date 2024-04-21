@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:passkey_demo_frontend/theme.dart';
+import 'package:passkey_demo_frontend/app_constants.dart';
 import 'package:provider/provider.dart';
 
 class LoadingState with ChangeNotifier {
@@ -42,7 +42,7 @@ class Loading extends StatelessWidget {
               padding: EdgeInsets.all(16.0),
               child: Text(
                 "loading",
-                style: TextStyle(color: AppConstants.theme.colorScheme.secondary),
+                style: TextStyle(color: AppConstants.theme.colorScheme.primary),
               ),
             )
           ],
