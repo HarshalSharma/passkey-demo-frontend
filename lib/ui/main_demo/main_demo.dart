@@ -1,24 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:passkey_demo_frontend/main.dart';
 import 'package:passkey_demo_frontend/passkey_service.dart';
 import 'package:passkey_demo_frontend/ui/utility_widgets/step_widgets.dart';
 
 import 'authn_by_userhandle_step.dart';
 import 'register_step.dart';
 
-class SimpleDemo extends StatefulWidget {
+class MainDemo extends StatefulWidget {
   final PasskeyService passkeyService;
 
-  const SimpleDemo({super.key, required this.passkeyService});
+  const MainDemo({super.key, required this.passkeyService});
 
   @override
-  State<SimpleDemo> createState() => _SimpleDemoState();
+  State<MainDemo> createState() => _MainDemoState();
 }
 
-class _SimpleDemoState extends State<SimpleDemo> {
+class _MainDemoState extends State<MainDemo> {
   int _currentStep = 0;
-  List<bool> enabledSteps = [true, true, false, false, true, false, false, false];
+  List<bool> enabledSteps = [
+    true,
+    true,
+    false,
+    false,
+    true,
+    false,
+    false,
+    false
+  ];
   List<bool> completedSteps = [false, false, false, false, false, false, false];
 
   StepOutput step2 = StepOutput();
@@ -26,6 +34,7 @@ class _SimpleDemoState extends State<SimpleDemo> {
   @override
   Widget build(BuildContext context) {
     return Stepper(
+        physics: const ClampingScrollPhysics(),
         currentStep: _currentStep,
         controlsBuilder: (context, _) {
           return Row(
@@ -35,7 +44,10 @@ class _SimpleDemoState extends State<SimpleDemo> {
                       completedSteps[_currentStep] ? onStepContinue : null,
                   child: Text(
                     "continue",
-                    style: GoogleFonts.roboto(fontSize: 16),
+                    style: GoogleFonts.roboto(
+                        fontSize: 16,
+                        color:
+                            completedSteps[_currentStep] ? Colors.green : null),
                   ))
             ],
           );
@@ -197,7 +209,7 @@ class _SimpleDemoState extends State<SimpleDemo> {
             content: BasicStep(
               title: "Login with UserName and Passkey",
               description:
-              "User would need to provide a UserName/UserHandle, using which passkey LOGIN could be triggered to securely enter into the system.",
+                  "User would need to provide a UserName/UserHandle, using which passkey LOGIN could be triggered to securely enter into the system.",
               children: [
                 StepButton(
                   "LOGIN WITH USERNAME",

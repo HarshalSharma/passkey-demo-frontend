@@ -8,8 +8,8 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import 'app_state.dart';
+import 'ui/main_demo/main_demo.dart';
 import 'ui/setup_backend_widgets.dart';
-import 'ui/simple_demo/simple_demo.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -100,7 +100,7 @@ class _RootWidgetState extends State<RootWidget> {
                     indent: 20,
                     endIndent: 20,
                   ),
-                  SimpleDemo(
+                  MainDemo(
                     passkeyService: passkeyService,
                   ),
                   const Divider(
