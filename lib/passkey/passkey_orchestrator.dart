@@ -80,7 +80,7 @@ class PasskeyOrchestrator implements PasskeyService {
 
     // it is not mandatory to provide credential id in login response, as server would anyway know it.
     AuthenticationRequest body = AuthenticationRequest(
-        credentialId: "",
+        credentialId: loginResponse.credentialId!,
         authenticatorData: loginResponse.authData!,
         clientDataJson: loginResponse.clientDataJson!,
         signature: loginResponse.signature!);

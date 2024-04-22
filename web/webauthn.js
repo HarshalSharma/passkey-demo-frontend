@@ -95,6 +95,7 @@ function login(options, resolve, reject) {
             const userHandle = response.userHandle;
 
             const loginResponse = {};
+            loginResponse["credential_id"] = publicKeyCredential.id;
             loginResponse["auth_data"] = bufferToBase64URL(authenticatorData);
             loginResponse["client_data_json"] = bufferToBase64URL(clientJSON);
             loginResponse["signature"] = bufferToBase64URL(signature);

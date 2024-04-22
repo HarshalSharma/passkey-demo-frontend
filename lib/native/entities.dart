@@ -3,9 +3,8 @@ class PublicKeyCreationResponse {
   String? _clientDataJson;
   String? _credentialId;
 
-
-  PublicKeyCreationResponse(this._attestationObject, this._clientDataJson,
-      this._credentialId);
+  PublicKeyCreationResponse(
+      this._attestationObject, this._clientDataJson, this._credentialId);
 
   String? get attestationObject => _attestationObject;
 
@@ -26,18 +25,19 @@ class PublicKeyCreationResponse {
     data['credential_id'] = _credentialId;
     return data;
   }
-
 }
 
 class PublicKeyAuthNResponse {
+  String? _credentialId;
   String? _authData;
   String? _clientDataJson;
   String? _signature;
   String? _userHandle;
 
+  PublicKeyAuthNResponse(this._credentialId, this._authData,
+      this._clientDataJson, this._signature, this._userHandle);
 
-  PublicKeyAuthNResponse(this._authData, this._clientDataJson, this._signature,
-      this._userHandle);
+  String? get credentialId => _credentialId;
 
   String? get authData => _authData;
 
@@ -48,6 +48,7 @@ class PublicKeyAuthNResponse {
   String? get signature => _signature;
 
   PublicKeyAuthNResponse.fromJson(Map<String, dynamic> json) {
+    _credentialId = json['credential_id'];
     _authData = json['auth_data'];
     _clientDataJson = json['client_data_json'];
     _signature = json['signature'];
@@ -56,11 +57,11 @@ class PublicKeyAuthNResponse {
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = <String, dynamic>{};
+    data['credential_id'] = _credentialId;
     data['auth_data'] = _authData;
     data['client_data_json'] = _clientDataJson;
     data['user_handle'] = _userHandle;
     data['signature'] = _signature;
     return data;
   }
-
 }
