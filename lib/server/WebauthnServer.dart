@@ -70,8 +70,7 @@ class WebauthnServer implements WebauthnAPI {
       });
 
       if (response.statusCode >= 200 && response.statusCode < 300) {
-        // Request was successful, parse response
-        return jsonDecode(response.body);
+        return readResponse(response);
       } else {
         // Request failed, handle error
         log('Failed to fetch data: ${response.statusCode}');
@@ -95,8 +94,7 @@ class WebauthnServer implements WebauthnAPI {
       );
 
       if (response.statusCode >= 200 && response.statusCode < 300) {
-        // Request was successful, parse response
-        return jsonDecode(response.body);
+        return readResponse(response);
       } else {
         // Request failed, handle error
         log('Failed to post data: ${response.statusCode}');
@@ -106,6 +104,15 @@ class WebauthnServer implements WebauthnAPI {
       // Handle exceptions
       log('Error posting data: $e');
       throw Exception('Error posting data: $e');
+    }
+  }
+
+  readResponse(http.Response response) {
+    if (response.body.isNotEmpty) {
+      // Request was successful, parse response
+      return jsonDecode(response.body);
+    } else {
+      return {};
     }
   }
 }
