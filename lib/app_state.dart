@@ -6,24 +6,20 @@ class ServerState with ChangeNotifier {
   String _host = "http://localhost";
   String _port = "8080";
 
-  get serverOrigin => "$_host:$_port";
+  get serverOrigin => _port.isEmpty ? _host : "$_host:$_port";
 
   get host => _host;
 
   get port => _port;
 
   void setHost(String host) {
-    if (host.isNotEmpty) {
       _host = host;
       notifyListeners();
-    }
   }
 
   void setPort(String port) {
-    if (port.isNotEmpty) {
       _port = port;
       notifyListeners();
-    }
   }
 }
 

@@ -174,10 +174,8 @@ class _ServerConfigWidgetState extends State<ServerConfigWidget> {
                   controller: hostController,
                   onChanged: (value) {
                     setState(() {
-                      if (value.isNotEmpty) {
                         Provider.of<ServerState>(context, listen: false)
                             .setHost(value);
-                      }
                     });
                   },
                   decoration: const InputDecoration(
@@ -195,10 +193,8 @@ class _ServerConfigWidgetState extends State<ServerConfigWidget> {
                   controller: portController,
                   onChanged: (value) {
                     setState(() {
-                      if (value.isNotEmpty) {
                         Provider.of<ServerState>(context, listen: false)
                             .setPort(value);
-                      }
                     });
                   },
                   decoration: const InputDecoration(

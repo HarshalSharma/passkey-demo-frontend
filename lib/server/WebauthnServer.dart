@@ -65,7 +65,9 @@ class WebauthnServer implements WebauthnAPI {
 
   Future<Map<String, dynamic>?> httpGET(String uri) async {
     try {
-      final response = await http.get(Uri.parse(uri));
+      final response = await http.get(Uri.parse(uri), headers: {
+        "ngrok-skip-browser-warning": "0000",
+      });
 
       if (response.statusCode >= 200 && response.statusCode < 300) {
         // Request was successful, parse response
