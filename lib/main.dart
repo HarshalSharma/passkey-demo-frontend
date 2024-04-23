@@ -3,12 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:passkey_demo_frontend/app_constants.dart';
 import 'package:passkey_demo_frontend/passkey/passkey_orchestrator.dart';
 import 'package:passkey_demo_frontend/server/WebauthnServer.dart';
+import 'package:passkey_demo_frontend/ui/main_demo/main_demo.dart';
 import 'package:passkey_demo_frontend/ui/utility_widgets/step_widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import 'app_state.dart';
-import 'ui/main_demo/main_demo.dart';
 import 'ui/setup_backend_widgets.dart';
 import 'ui/utility_widgets/code_widget.dart';
 
@@ -201,7 +201,9 @@ class HomePage extends StatelessWidget {
                 style: AppConstants.textTheme.titleLarge,
               ),
             ),
-            const NumberedStep(title: "Flow could be started from any of the active step. i.e Step 1, Step 2 or Step 5."),
+            const NumberedStep(
+                title:
+                    "Flow could be started from any of the active step. i.e Step 1, Step 2 or Step 5."),
             MainDemo(
               passkeyService: passkeyService,
             ),

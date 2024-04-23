@@ -228,3 +228,16 @@ class NumberedStep extends StatelessWidget {
     );
   }
 }
+
+class StepBodyWidget extends StatelessWidget {
+  final Function() onSuccess;
+  final Widget child;
+
+  const StepBodyWidget(
+      {super.key, required this.onSuccess, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return child;
+  }
+}

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:passkey_demo_frontend/app_constants.dart';
 import 'package:passkey_demo_frontend/passkey/user.dart';
 import 'package:passkey_demo_frontend/passkey_service.dart';
 import 'package:passkey_demo_frontend/ui/utility_widgets/loading_widget.dart';
@@ -10,10 +11,9 @@ import '../../app_state.dart';
 
 class RegisterStepWidget extends StatefulWidget {
   final PasskeyService passkeyService;
-  final Function(StepOutput) onResult;
 
   const RegisterStepWidget(
-      {super.key, required this.passkeyService, required this.onResult});
+      {super.key, required this.passkeyService});
 
   @override
   State<RegisterStepWidget> createState() => _RegisterStepWidgetState();
@@ -22,13 +22,14 @@ class RegisterStepWidget extends StatefulWidget {
 class _RegisterStepWidgetState extends State<RegisterStepWidget> {
   StepOutput? output;
   var isWaiting = false;
+  User? user;
 
   @override
   Widget build(BuildContext context) {
     return BasicStep(
-      title: "Register New Passkey",
+      title: "Enroll new Credential.",
       description:
-          "User could choose to register for NEW passkey, which they could later use to LOGIN into the system.",
+          "First, User would need to create an account / register a new passkey credential. \nAn username would be auto provided after this step.",
       children: [
         StepButton(
           "REGISTER",
@@ -41,6 +42,14 @@ class _RegisterStepWidgetState extends State<RegisterStepWidget> {
           },
         ),
         if (output != null) StepOutputWidget(stepOutput: output!),
+        if (user != null)
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: SelectableText(
+              "A UserHandle is generated in the output: ${user?.userHandle}",
+              style: AppConstants.textTheme.labelLarge,
+            ),
+          ),
         if (isWaiting == true)
           const Padding(
             padding: EdgeInsets.all(8.0),
@@ -63,7 +72,8 @@ class _RegisterStepWidgetState extends State<RegisterStepWidget> {
               timestamp: DateTime.now(),
               output: "Registered Credential with User : ${user.toString()}",
               successful: true);
-          widget.onResult(output!);
+          context.findAncestorWidgetOfExactType<StepBodyWidget>()?.onSuccess();
+          this.user = user;
           NotificationUtils.notify(
               context, "Registered with username - ${user.userHandle}");
         });
@@ -73,13 +83,11 @@ class _RegisterStepWidgetState extends State<RegisterStepWidget> {
             timestamp: DateTime.now(),
             output:
                 "Error Registering, please check backend service configuration.");
-        widget.onResult(output!);
       }
     } catch (e) {
       exception = e.toString();
       output = StepOutput(
           successful: false, timestamp: DateTime.now(), output: exception);
-      widget.onResult(output!);
     }
     setState(() {
       isWaiting = false;
