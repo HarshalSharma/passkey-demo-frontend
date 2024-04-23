@@ -1,25 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:passkey_demo_frontend/app_constants.dart';
 
 import 'passkey/user.dart';
 
 class ServerState with ChangeNotifier {
-  String _host = "http://localhost";
-  String _port = "8080";
+  String _host = "";
+  String _port = "";
 
-  get serverOrigin => _port.isEmpty ? _host : "$_host:$_port";
+  String serverOrigin() {
+    if (_host.isEmpty && _port.isEmpty) {
+      return AppConstants.defaultServer;
+    }
+    if (_port.isEmpty) {
+      return _host;
+    }
+    return "$_host:$_port";
+  }
 
   get host => _host;
 
   get port => _port;
 
   void setHost(String host) {
-      _host = host;
-      notifyListeners();
+    _host = host;
+    notifyListeners();
   }
 
   void setPort(String port) {
-      _port = port;
-      notifyListeners();
+    _port = port;
+    notifyListeners();
   }
 }
 

@@ -17,7 +17,7 @@ class WebauthnServer implements WebauthnAPI {
 
   WebauthnServer(this.context);
 
-  get origin => Provider.of<ServerState>(context, listen: false).serverOrigin;
+  get origin => Provider.of<ServerState>(context, listen: false).serverOrigin();
 
   @override
   Future<PublicKeyCredentialCreationOptionsResponse?> registrationGet() async {

@@ -1,7 +1,4 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:passkey_demo_frontend/app_state.dart';
 import 'package:passkey_demo_frontend/server/WebauthnServer.dart';
@@ -24,89 +21,32 @@ class SetupBackendWidget extends StatelessWidget {
     return Padding(
         padding: const EdgeInsets.all(16.0),
         child: ExpansionTile(
-          leading: Icon(Icons.settings),
+          leading: const Icon(Icons.settings),
           title: Padding(
             padding: const EdgeInsets.only(bottom: 8.0),
             child: Text(
-              "CONFIGURE DEMO SERVER",
-              style:
-              GoogleFonts.roboto(fontWeight: FontWeight.bold, fontSize: 14),
+              "CONFIGURE CUSTOM SERVER",
+              style: AppConstants.textTheme.labelLarge,
             ),
           ),
           subtitle:
-          Consumer<ServerState>(builder: (context, serverState, child) {
+              Consumer<ServerState>(builder: (context, serverState, child) {
             return Text(
-              "${serverState.serverOrigin}",
-              style: GoogleFonts.roboto(fontSize: 14),
-            );
+                serverState.serverOrigin() == AppConstants.defaultServer
+                    ? "Currently Using Default Server"
+                    : serverState.serverOrigin(),
+                style: AppConstants.textTheme.labelMedium);
           }),
           expandedCrossAxisAlignment: CrossAxisAlignment.start,
           textColor: AppConstants.theme.colorScheme.secondary,
           expandedAlignment: Alignment.topLeft,
           children: [
             Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Text(
-                  "Run the docker command below to start backend server container :",
-                  style: GoogleFonts.roboto(fontSize: 14)),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: MouseRegion(
-                cursor: SystemMouseCursors.click,
-                child: GestureDetector(
-                  onTap: () {
-                    copyDockerCodeToClipboard(context);
-                  },
-                  child: Container(
-                    color: Colors.black12,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Text.rich(TextSpan(
-                          text:
-                          "docker run -p 8080:8080 harshalworks/passkey-demo-harshalsharma:v1",
-                          style: GoogleFonts.jetBrainsMono(
-                              color: AppConstants.theme.colorScheme.secondary),
-                          children: [
-                            WidgetSpan(
-                              child: Padding(
-                                padding: const EdgeInsets.only(left: 8.0),
-                                child: Icon(
-                                  Icons.copy,
-                                  size: 14,
-                                  color:
-                                  AppConstants.theme.colorScheme.secondary,
-                                ),
-                              ),
-                            )
-                          ])),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            Padding(
               padding: const EdgeInsets.all(8.0),
               child: ServerConfigWidget(webauthnServer: webauthnServer),
             )
           ],
         ));
-  }
-
-  void copyDockerCodeToClipboard(BuildContext context) {
-    Clipboard.setData(const ClipboardData(
-        text:
-        "docker run -p 8080:8080 harshalworks/passkey-demo-harshalsharma:v1"));
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        backgroundColor: AppConstants.theme.primaryColor,
-        content: Text(
-          'Code copied to clipboard',
-          style: GoogleFonts.jetBrainsMono(
-              color: Colors.black, fontWeight: FontWeight.bold),
-        ),
-      ),
-    );
   }
 }
 
@@ -132,12 +72,8 @@ class _ServerConfigWidgetState extends State<ServerConfigWidget> {
 
     hostController = TextEditingController();
     portController = TextEditingController();
-    hostController.text = Provider
-        .of<ServerState>(context, listen: false)
-        .host;
-    portController.text = Provider
-        .of<ServerState>(context, listen: false)
-        .port;
+    hostController.text = Provider.of<ServerState>(context, listen: false).host;
+    portController.text = Provider.of<ServerState>(context, listen: false).port;
   }
 
   @override
@@ -157,7 +93,9 @@ class _ServerConfigWidgetState extends State<ServerConfigWidget> {
           padding: const EdgeInsets.all(8.0),
           child: Consumer<ServerState>(builder: (context, serverState, child) {
             return Text(
-              "${serverState.serverOrigin}",
+              serverState.serverOrigin() == AppConstants.defaultServer
+                  ? "Currently Using Default Server"
+                  : serverState.serverOrigin(),
               style: GoogleFonts.roboto(
                   fontSize: 18,
                   color: AppConstants.theme.colorScheme.secondary),
@@ -174,8 +112,8 @@ class _ServerConfigWidgetState extends State<ServerConfigWidget> {
                   controller: hostController,
                   onChanged: (value) {
                     setState(() {
-                        Provider.of<ServerState>(context, listen: false)
-                            .setHost(value);
+                      Provider.of<ServerState>(context, listen: false)
+                          .setHost(value);
                     });
                   },
                   decoration: const InputDecoration(
@@ -193,8 +131,8 @@ class _ServerConfigWidgetState extends State<ServerConfigWidget> {
                   controller: portController,
                   onChanged: (value) {
                     setState(() {
-                        Provider.of<ServerState>(context, listen: false)
-                            .setPort(value);
+                      Provider.of<ServerState>(context, listen: false)
+                          .setPort(value);
                     });
                   },
                   decoration: const InputDecoration(
@@ -203,8 +141,7 @@ class _ServerConfigWidgetState extends State<ServerConfigWidget> {
                   ),
                 ),
               ),
-            ),
-            const Expanded(child: SizedBox())
+            )
           ],
         ),
         Padding(
@@ -247,7 +184,8 @@ class _ServerConfigWidgetState extends State<ServerConfigWidget> {
       if (result != null) {
         return true;
       }
-    } catch (e) { //ignored}
+    } catch (e) {
+      //ignored}
       return false;
     }
     return false;

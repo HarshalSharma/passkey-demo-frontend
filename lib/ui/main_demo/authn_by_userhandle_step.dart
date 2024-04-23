@@ -3,6 +3,8 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:passkey_demo_frontend/passkey/user.dart';
 import 'package:passkey_demo_frontend/passkey_service.dart';
+import 'package:passkey_demo_frontend/ui/utility_widgets/loading_widget.dart';
+import 'package:passkey_demo_frontend/ui/utility_widgets/notification.dart';
 import 'package:passkey_demo_frontend/ui/utility_widgets/step_widgets.dart';
 import 'package:provider/provider.dart';
 
@@ -25,6 +27,7 @@ class _AuthNByUserHandleStepWidgetState
   String userHandle = "";
   late TextEditingController userHandleController;
   StepOutput? output;
+  bool isWaiting = false;
 
   @override
   void initState() {
@@ -50,7 +53,7 @@ class _AuthNByUserHandleStepWidgetState
             controller: userHandleController,
             onChanged: (value) {
               setState(() {
-                  userHandle = value;
+                userHandle = value;
               });
             },
             decoration: const InputDecoration(
@@ -61,11 +64,18 @@ class _AuthNByUserHandleStepWidgetState
         ),
         StepButton(
           "LOGIN WITH USERNAME",
-          onTap: userHandle.isNotEmpty ? () {
-            onLogin(context);
-          } : null,
+          onTap: userHandle.isNotEmpty
+              ? () {
+                  onLogin(context);
+                }
+              : null,
         ),
-        if (output != null) StepOutputWidget(stepOutput: output!)
+        if (output != null) StepOutputWidget(stepOutput: output!),
+        if (isWaiting == true)
+          const Padding(
+            padding: EdgeInsets.all(8.0),
+            child: Loading(),
+          )
       ],
     );
   }
@@ -80,9 +90,10 @@ class _AuthNByUserHandleStepWidgetState
           Provider.of<IdentityState>(context, listen: false).setUser(user!);
           output = StepOutput(
               timestamp: DateTime.now(),
-              output: "Registered Credential with User : ${user.toString()}",
+              output: "${user.userHandle} Successfully Logged In.",
               successful: true);
           widget.onResult(output!);
+          NotificationUtils.notify(context, "Registered with username - ${user.userHandle}");
         });
       } else {
         output = StepOutput(
@@ -97,5 +108,8 @@ class _AuthNByUserHandleStepWidgetState
       widget.onResult(output!);
       return;
     }
+    setState(() {
+      isWaiting = false;
+    });
   }
 }

@@ -1,9 +1,8 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:passkey_demo_frontend/passkey/user.dart';
 import 'package:passkey_demo_frontend/passkey_service.dart';
 import 'package:passkey_demo_frontend/ui/utility_widgets/loading_widget.dart';
+import 'package:passkey_demo_frontend/ui/utility_widgets/notification.dart';
 import 'package:passkey_demo_frontend/ui/utility_widgets/step_widgets.dart';
 import 'package:provider/provider.dart';
 
@@ -65,6 +64,8 @@ class _RegisterStepWidgetState extends State<RegisterStepWidget> {
               output: "Registered Credential with User : ${user.toString()}",
               successful: true);
           widget.onResult(output!);
+          NotificationUtils.notify(
+              context, "Registered with username - ${user.userHandle}");
         });
       } else {
         output = StepOutput(

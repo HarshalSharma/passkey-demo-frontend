@@ -58,11 +58,11 @@ class StepButton extends StatelessWidget {
     return ElevatedButton(
       style: ButtonStyle(
           backgroundColor: MaterialStateProperty.resolveWith((states) {
-            if(states.contains(MaterialState.disabled)) {
-              return Colors.grey;
-            }
-            return AppConstants.theme.colorScheme.secondary;
-          })),
+        if (states.contains(MaterialState.disabled)) {
+          return Colors.grey;
+        }
+        return AppConstants.theme.colorScheme.secondary;
+      })),
       onPressed: onTap,
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -103,7 +103,9 @@ class StepOutputWidget extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsets.all(8.0),
-          child: StatusIndicatorWidget(successful: stepOutput.successful,),
+          child: StatusIndicatorWidget(
+            successful: stepOutput.successful,
+          ),
         ),
         Expanded(
           child: Column(
@@ -137,8 +139,7 @@ class StepOutputWidget extends StatelessWidget {
   }
 
   String getFormattedTimestamp() {
-    var formattedTimestamp =
-    "${stepOutput.timestamp!.year.toString()}"
+    var formattedTimestamp = "${stepOutput.timestamp!.year.toString()}"
         "-${stepOutput.timestamp!.month.toString().padLeft(2, '0')}"
         "-${stepOutput.timestamp!.day.toString().padLeft(2, '0')} "
         "${stepOutput.timestamp!.hour.toString().padLeft(2, '0')}-"
@@ -167,66 +168,63 @@ class StatusIndicatorWidget extends StatelessWidget {
 }
 
 class NumberedStep extends StatelessWidget {
-  final String number;
-  final String title;
-  final String description;
+  final String? number;
+  final String? title;
+  final String? description;
   final List<Widget>? children;
 
   const NumberedStep(
       {super.key,
-      required this.number,
-      required this.title,
-      required this.description,
+      this.number,
+      this.title,
+      this.description,
       this.children});
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        if (number != null)
           Padding(
             padding: const EdgeInsets.only(left: 8.0, top: 8.0),
             child: Text(
-              number,
-              style:
-                  GoogleFonts.roboto(fontWeight: FontWeight.bold, fontSize: 18),
+              number!,
+              style: AppConstants.textTheme.bodyMedium,
             ),
           ),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (title != null)
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
-                    title,
-                    style: GoogleFonts.roboto(
-                        fontWeight: FontWeight.bold, fontSize: 18),
+                    title!,
+                    style: AppConstants.textTheme.bodyMedium,
+                    softWrap: true,
                   ),
                 ),
+              if (description != null)
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Text(
-                    description,
-                    style: GoogleFonts.roboto(
-                      fontSize: 18,
-                      height: 1.5,
-                    ),
+                    description!,
+                    style: AppConstants.textTheme.bodyMedium,
+                    softWrap: true,
                   ),
                 ),
-                if (children != null)
-                  for (var widget in children!)
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: widget,
-                    )
-              ],
-            ),
+              if (children != null)
+                for (var widget in children!)
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: widget,
+                  )
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

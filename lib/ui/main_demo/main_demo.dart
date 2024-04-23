@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:passkey_demo_frontend/app_constants.dart';
 import 'package:passkey_demo_frontend/passkey_service.dart';
+import 'package:passkey_demo_frontend/ui/utility_widgets/notification.dart';
 import 'package:passkey_demo_frontend/ui/utility_widgets/step_widgets.dart';
 
 import 'authn_by_userhandle_step.dart';
@@ -64,7 +66,7 @@ class _MainDemoState extends State<MainDemo> {
           Step(
               title: Text(
                 "NEW REGISTRATION",
-                style: GoogleFonts.roboto(fontWeight: FontWeight.bold),
+                style: AppConstants.textTheme.titleMedium
               ),
               state: completedSteps[0] ? StepState.complete : StepState.indexed,
               isActive: 0 <= _currentStep || enabledSteps[0],
