@@ -58,11 +58,7 @@ class _AuthNByUserHandleStepWidgetState
             )),
         StepButton(
           "LOGIN WITH USERNAME",
-          onTap: userHandleController.text.isNotEmpty
-              ? () {
-                  onLogin();
-                }
-              : null,
+          onTap: onLogin,
         ),
         if (output != null) StepOutputWidget(stepOutput: output!),
         if (isLoading == true)
@@ -75,6 +71,11 @@ class _AuthNByUserHandleStepWidgetState
   }
 
   onLogin() async {
+    if (userHandleController.text.isEmpty) {
+      NotificationUtils.notify(context, "Please enter a username !");
+      return;
+    }
+
     setState(() {
       isLoading = true;
     });
