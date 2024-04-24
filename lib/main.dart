@@ -47,17 +47,6 @@ class _RootWidgetState extends State<RootWidget> {
             leading: const Icon(Icons.vpn_key),
             backgroundColor: Colors.white,
             foregroundColor: AppConstants.theme.colorScheme.secondary,
-            actions: [
-              if (context.watch<IdentityState>().user != null)
-                IconButton(
-                  onPressed: resetUser,
-                  icon: Icon(
-                    Icons.lock_reset,
-                    color: AppConstants.theme.colorScheme.primary,
-                  ),
-                  tooltip: "LOGOUT",
-                )
-            ],
           ),
           body: LayoutBuilder(builder: (context, constraints) {
             var homePage = HomePage(
@@ -74,10 +63,6 @@ class _RootWidgetState extends State<RootWidget> {
             return homePage;
           })),
     );
-  }
-
-  void resetUser() {
-    Provider.of<IdentityState>(context, listen: false).clearState();
   }
 }
 
@@ -194,10 +179,11 @@ class HomePage extends StatelessWidget {
               indent: 20,
               endIndent: 20,
             ),
+            const SizedBox(height: 50,),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
-                "DEMO:",
+                "THE DEMO:",
                 style: AppConstants.textTheme.titleLarge,
               ),
             ),
