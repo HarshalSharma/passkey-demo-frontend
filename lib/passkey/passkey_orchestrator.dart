@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:passkey_demo_frontend/location_service.dart';
@@ -101,6 +102,8 @@ class PasskeyOrchestrator implements PasskeyService {
       throw Exception("native api didn't found credential to authenticate.");
     }
 
+    String userHandle = String.fromCharCodes(base64Decode(loginResponse.userHandle!));
+
     // it is not mandatory to provide credential id in login response, as server would anyway know it.
     AuthenticationRequest body = AuthenticationRequest(
         credentialId: loginResponse.credentialId!,
@@ -108,14 +111,14 @@ class PasskeyOrchestrator implements PasskeyService {
         clientDataJson: loginResponse.clientDataJson!,
         signature: loginResponse.signature!);
     var authenticationResponse =
-        await webauthnAPI.authenticationUserHandlePost(body, loginResponse.userHandle!);
+        await webauthnAPI.authenticationUserHandlePost(body, userHandle);
 
     if (authenticationResponse != null) {
       log("authentication successful");
       return User(
-          userHandle: loginResponse.userHandle!,
-          userName: loginResponse.userHandle!,
-          displayName: loginResponse.userHandle!,
+          userHandle: userHandle,
+          userName: userHandle,
+          displayName: userHandle,
           token: authenticationResponse.accessToken);
     }
     log("authentication failed.");
