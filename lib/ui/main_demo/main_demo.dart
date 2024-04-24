@@ -1,17 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:passkey_demo_frontend/app_constants.dart';
 import 'package:passkey_demo_frontend/app_state.dart';
+import 'package:passkey_demo_frontend/location_service.dart';
 import 'package:passkey_demo_frontend/passkey_service.dart';
+import 'package:passkey_demo_frontend/remote_services.dart';
 import 'package:passkey_demo_frontend/ui/main_demo/main_demo_steps.dart';
 import 'package:passkey_demo_frontend/ui/utility_widgets/notification.dart';
 import 'package:passkey_demo_frontend/ui/utility_widgets/step_widgets.dart';
 import 'package:provider/provider.dart';
 
 class MainDemo extends StatefulWidget {
+  final RemoteServices remoteServices;
   final PasskeyService passkeyService;
+  final LocationService locationService;
 
-  const MainDemo({super.key, required this.passkeyService});
+  const MainDemo(
+      {super.key,
+      required this.remoteServices,
+      required this.passkeyService,
+      required this.locationService});
 
   @override
   State<MainDemo> createState() => _MainDemoState();
@@ -28,7 +35,10 @@ class _MainDemoState extends State<MainDemo> {
   @override
   void initState() {
     super.initState();
-    mainDemoSteps = MainDemoSteps(widget.passkeyService);
+    mainDemoSteps = MainDemoSteps(
+        remoteServices: widget.remoteServices,
+        passkeyService: widget.passkeyService,
+        locationService: widget.locationService);
     steps = mainDemoSteps.create();
     createSteps();
   }

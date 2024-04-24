@@ -4,15 +4,21 @@ import 'dart:developer';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:http/http.dart' as http;
 import 'package:passkey_demo_frontend/app_state.dart';
+import 'package:passkey_demo_frontend/server/api/notes_api.dart';
+import 'package:passkey_demo_frontend/server/api/preferences_api.dart';
 import 'package:passkey_demo_frontend/server/api/webauthn_api.dart';
 import 'package:passkey_demo_frontend/server/models/authentication_request.dart';
+import 'package:passkey_demo_frontend/server/models/preferences.dart';
 import 'package:passkey_demo_frontend/server/models/public_key_credential_creation_options_response.dart';
 import 'package:passkey_demo_frontend/server/models/public_key_credential_request_options_response.dart';
 import 'package:passkey_demo_frontend/server/models/registration_request.dart';
+import 'package:passkey_demo_frontend/server/models/simple_note.dart';
 import 'package:passkey_demo_frontend/server/models/successful_authentication_response.dart';
 import 'package:provider/provider.dart';
 
-class WebauthnServer implements WebauthnAPI {
+class WebauthnServer
+    with HttpMixin
+    implements WebauthnAPI, NotesAPI, UserPreferencesAPI {
   final BuildContext context;
 
   WebauthnServer(this.context);
@@ -52,6 +58,18 @@ class WebauthnServer implements WebauthnAPI {
   }
 
   @override
+  Future<PublicKeyCredentialRequestOptionsResponse?> autoAuthenticationGet(
+      double latitude, double longitude) async {
+    var uri =
+        '$origin/auto-authentication?latitude=$latitude&longitude=$longitude';
+    var jsonMap = await httpGET(uri);
+    if (jsonMap == null) {
+      return null;
+    }
+    return PublicKeyCredentialRequestOptionsResponse.fromJson(jsonMap);
+  }
+
+  @override
   Future<SuccessfulAuthenticationResponse?> authenticationUserHandlePost(
       AuthenticationRequest body, String userHandle) async {
     var uri = '$origin/authentication/$userHandle';
@@ -63,11 +81,52 @@ class WebauthnServer implements WebauthnAPI {
     return SuccessfulAuthenticationResponse.fromJson(responseMap);
   }
 
-  Future<Map<String, dynamic>?> httpGET(String uri) async {
+  @override
+  Future<SimpleNote> notesGet(String token) async {
+    var uri = '$origin/notes';
+    var jsonMap = await httpGET(uri, headers: {"Authorization": "Bearer $token"});
+    if (jsonMap == null) {
+      return SimpleNote("");
+    }
+    return SimpleNote.fromJson(jsonMap);
+  }
+
+  @override
+  Future notesPut(String token, SimpleNote body) async {
+    var uri = '$origin/notes';
+    var jsonBody = jsonEncode(body.toJson());
+    await httpPOST(uri, jsonBody, headers: {"Authorization": "Bearer $token"});
+  }
+
+  @override
+  Future<Preferences?> preferencesGet(String token) async {
+    var uri = '$origin/preferences';
+    var jsonMap = await httpGET(uri, headers: {"Authorization": "Bearer $token"});
+    if (jsonMap == null) {
+      return null;
+    }
+    return Preferences.fromJson(jsonMap);
+  }
+
+  @override
+  Future preferencesPut(String token, Preferences body) async {
+    var uri = '$origin/preferences';
+    var jsonBody = jsonEncode(body.toJson());
+    await httpPOST(uri, jsonBody, headers: {"Authorization": "Bearer $token"});
+  }
+}
+
+mixin HttpMixin {
+  Future<Map<String, dynamic>?> httpGET(String uri,
+      {Map<String, String>? headers}) async {
     try {
-      final response = await http.get(Uri.parse(uri), headers: {
+      var reqHeaders = {
         "ngrok-skip-browser-warning": "0000",
-      });
+      };
+      if (headers != null) {
+        reqHeaders.addAll(headers);
+      }
+      final response = await http.get(Uri.parse(uri), headers: reqHeaders);
 
       if (response.statusCode >= 200 && response.statusCode < 300) {
         return readResponse(response);
@@ -83,13 +142,19 @@ class WebauthnServer implements WebauthnAPI {
     }
   }
 
-  Future<Map<String, dynamic>?> httpPOST(String uri, String jsonBody) async {
+  Future<Map<String, dynamic>?> httpPOST(String uri, String jsonBody,
+      {Map<String, String>? headers}) async {
     try {
+      var reqHeaders = {
+        'Content-Type': 'application/json',
+        "ngrok-skip-browser-warning": "0000",
+      };
+      if (headers != null) {
+        reqHeaders.addAll(headers);
+      }
       final response = await http.post(
         Uri.parse(uri),
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: reqHeaders,
         body: jsonBody, // Example request body
       );
 

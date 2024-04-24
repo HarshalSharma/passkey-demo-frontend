@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:passkey_demo_frontend/location_service.dart';
 import 'package:passkey_demo_frontend/passkey_service.dart';
+import 'package:passkey_demo_frontend/remote_services.dart';
 import 'package:passkey_demo_frontend/ui/main_demo/authn_by_location_step.dart';
 import 'package:passkey_demo_frontend/ui/main_demo/home_location_update_step.dart';
 import 'package:passkey_demo_frontend/ui/main_demo/notes_editor_step.dart';
@@ -10,9 +12,15 @@ import 'authn_by_userhandle_step.dart';
 import 'register_step.dart';
 
 class MainDemoSteps {
-  PasskeyService passkeyService;
+  RemoteServices remoteServices;
 
-  MainDemoSteps(this.passkeyService);
+  PasskeyService passkeyService;
+  LocationService locationService;
+
+  MainDemoSteps(
+      {required this.remoteServices,
+      required this.passkeyService,
+      required this.locationService});
 
   List<DemoStep> create() {
     List<DemoStep> steps = [];
@@ -32,16 +40,16 @@ class MainDemoSteps {
     steps.add(DemoStep(
         title: "USER USES SECURE APIS",
         widget: NotesEditorStepWidget(
-          passkeyService: passkeyService,
-        ),
+            passkeyService: passkeyService, notesAPI: remoteServices.notesApi),
 
         //TODO: remove
         isEnabled: true));
     steps.add(DemoStep(
         title: "USER MARKS HOME LOCATION",
         widget: HomeLocationUpdateStepWidget(
-          passkeyService: passkeyService,
-        ),
+            preferencesAPI: remoteServices.preferencesApi,
+            passkeyService: passkeyService,
+            locationService: locationService),
 
         //TODO: remove
         isEnabled: true));
@@ -54,14 +62,12 @@ class MainDemoSteps {
     steps.add(DemoStep(
         title: "USER LOGIN AT HOME (ANY PREFERRED LOCATION)",
         widget: AuthNByLocationStepWidget(
-          passkeyService: passkeyService,
-        ),
+            passkeyService: passkeyService, locationService: locationService),
         isEnabled: true));
     steps.add(DemoStep(
         title: "USER USES SECURE APIS",
         widget: NotesEditorStepWidget(
-          passkeyService: passkeyService,
-        ),
+            passkeyService: passkeyService, notesAPI: remoteServices.notesApi),
 
         //TODO: remove
         isEnabled: true));

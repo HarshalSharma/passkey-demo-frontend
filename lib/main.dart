@@ -1,7 +1,11 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:passkey_demo_frontend/app_constants.dart';
+import 'package:passkey_demo_frontend/location_service.dart';
+import 'package:passkey_demo_frontend/native/default_location_service.dart';
 import 'package:passkey_demo_frontend/passkey/passkey_orchestrator.dart';
+import 'package:passkey_demo_frontend/passkey_service.dart';
+import 'package:passkey_demo_frontend/remote_services.dart';
 import 'package:passkey_demo_frontend/server/WebauthnServer.dart';
 import 'package:passkey_demo_frontend/ui/main_demo/main_demo.dart';
 import 'package:passkey_demo_frontend/ui/utility_widgets/step_widgets.dart';
@@ -28,10 +32,22 @@ class RootWidget extends StatefulWidget {
 }
 
 class _RootWidgetState extends State<RootWidget> {
+  late final WebauthnServer webauthnServer;
+  late final LocationService locationService;
+  late final PasskeyService passkeyService;
+  late final RemoteServices remoteServices;
+
+  @override
+  void initState() {
+    super.initState();
+    webauthnServer = WebauthnServer(context);
+    remoteServices = RemoteServices(webauthnServer);
+    passkeyService = PasskeyOrchestrator(webauthnAPI: webauthnServer);
+    locationService = DefaultLocationService();
+  }
+
   @override
   Widget build(BuildContext context) {
-    var webauthnServer = WebauthnServer(context);
-    final passkeyService = PasskeyOrchestrator(webauthnAPI: webauthnServer);
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Seamless Authentication Suite Demo',
@@ -50,7 +66,10 @@ class _RootWidgetState extends State<RootWidget> {
           ),
           body: LayoutBuilder(builder: (context, constraints) {
             var homePage = HomePage(
-                webauthnServer: webauthnServer, passkeyService: passkeyService);
+              remoteServices: remoteServices,
+              passkeyService: passkeyService,
+              locationService: locationService,
+            );
             double maxWidth = 1024;
             if (constraints.maxWidth > maxWidth) {
               return Center(
@@ -69,12 +88,14 @@ class _RootWidgetState extends State<RootWidget> {
 class HomePage extends StatelessWidget {
   const HomePage({
     super.key,
-    required this.webauthnServer,
+    required this.remoteServices,
     required this.passkeyService,
+    required this.locationService,
   });
 
-  final WebauthnServer webauthnServer;
-  final PasskeyOrchestrator passkeyService;
+  final RemoteServices remoteServices;
+  final PasskeyService passkeyService;
+  final LocationService locationService;
 
   @override
   Widget build(BuildContext context) {
@@ -171,7 +192,7 @@ class HomePage extends StatelessWidget {
                     "This demo can also be configured to use a self-hosted backend server.\nUse the docker command shared above,"
                     " and Start the docker container. \nConfigure the server and port details below, for example host: http://localhost and port:8080"
                     "\nNote that this is not required when Default Server is online."),
-            SetupBackendWidget(webauthnServer: webauthnServer),
+            SetupBackendWidget(remoteServices: remoteServices),
             const Divider(
               height: 10,
               thickness: 1,
@@ -179,7 +200,9 @@ class HomePage extends StatelessWidget {
               indent: 20,
               endIndent: 20,
             ),
-            const SizedBox(height: 50,),
+            const SizedBox(
+              height: 50,
+            ),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: Text(
@@ -190,11 +213,13 @@ class HomePage extends StatelessWidget {
             const NumberedStep(
                 title:
                     "Flow could be started from any of the active steps i.e. \n"
-                        "Step 1 - From first time Registration, \n"
-                        "Step 2 - From authentication with known username, or \n"
-                        "Step 6 - From authentication at preferred location after configuration."),
+                    "Step 1 - From first time Registration, \n"
+                    "Step 2 - From authentication with known username, or \n"
+                    "Step 6 - From authentication at preferred location after configuration."),
             MainDemo(
+              remoteServices: remoteServices,
               passkeyService: passkeyService,
+              locationService: locationService
             ),
             const Divider(
               height: 10,

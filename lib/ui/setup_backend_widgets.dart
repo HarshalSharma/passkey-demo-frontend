@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:passkey_demo_frontend/app_state.dart';
-import 'package:passkey_demo_frontend/server/WebauthnServer.dart';
+import 'package:passkey_demo_frontend/remote_services.dart';
 import 'package:provider/provider.dart';
 
 import '../app_constants.dart';
@@ -9,11 +9,11 @@ import 'utility_widgets/loading_widget.dart';
 import 'utility_widgets/step_widgets.dart';
 
 class SetupBackendWidget extends StatelessWidget {
-  final WebauthnServer webauthnServer;
+  final RemoteServices remoteServices;
 
   const SetupBackendWidget({
     super.key,
-    required this.webauthnServer,
+    required this.remoteServices,
   });
 
   @override
@@ -43,7 +43,7 @@ class SetupBackendWidget extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: ServerConfigWidget(webauthnServer: webauthnServer),
+              child: ServerConfigWidget(remoteServices: remoteServices),
             )
           ],
         ));
@@ -51,9 +51,9 @@ class SetupBackendWidget extends StatelessWidget {
 }
 
 class ServerConfigWidget extends StatefulWidget {
-  final WebauthnServer webauthnServer;
+  final RemoteServices remoteServices;
 
-  const ServerConfigWidget({super.key, required this.webauthnServer});
+  const ServerConfigWidget({super.key, required this.remoteServices});
 
   @override
   State<ServerConfigWidget> createState() => _ServerConfigWidgetState();
@@ -180,7 +180,7 @@ class _ServerConfigWidgetState extends State<ServerConfigWidget> {
 
   Future<bool?> testServer() async {
     try {
-      var result = await widget.webauthnServer.registrationGet();
+      var result = await widget.remoteServices.webauthnApi.registrationGet();
       if (result != null) {
         return true;
       }

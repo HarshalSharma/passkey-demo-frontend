@@ -5,11 +5,16 @@ import '../models/registration_request.dart';
 import '../models/successful_authentication_response.dart';
 
 abstract class WebauthnAPI {
-  /// Creates Public Key Credential Request Options.
+  /// Creates Public Key Credential Request Options From userHandle.
   ///
   ///
   Future<PublicKeyCredentialRequestOptionsResponse?>
       authenticationUserHandleGet(String userHandle);
+
+  /// Creates Public key Credential Request Options from Location.
+  ///
+  Future<PublicKeyCredentialRequestOptionsResponse?>
+  autoAuthenticationGet(double latitude, double longitude);
 
   /// Authenticates the user credential signing request and grants a token.
   ///
