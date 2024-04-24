@@ -22,8 +22,8 @@ class NotesEditorStepWidget extends StatefulWidget {
 }
 
 class _NotesEditorStepWidgetState extends State<NotesEditorStepWidget> {
+  final textEditingController = TextEditingController();
   SimpleNote? serverNote;
-  String notes = "";
 
   @override
   Widget build(BuildContext context) {
@@ -36,19 +36,27 @@ class _NotesEditorStepWidgetState extends State<NotesEditorStepWidget> {
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.done) {
                   if (snapshot.hasData) {
-                    notes = serverNote!.note;
+                    textEditingController.text = snapshot.data!.note;
                     return BasicStep(
                       title: "Notes App - Read/Edit User Notes",
                       description:
                           "It is to demonstrate that current user [${user.userHandle}]"
                           " can read/write their secured notes. ",
                       children: [
-                        const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: NoteEditor(),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: TextField(
+                            controller: textEditingController,
+                            maxLines: 10,
+                            keyboardType: TextInputType.multiline,
+                            decoration: const InputDecoration(
+                              labelText: 'Enter your text',
+                              border: OutlineInputBorder(),
+                            ),
+                          ),
                         ),
                         StepButton("Update Notes", onTap: () {
-                          updateNotes(context, user, notes);
+                          updateNotes(context, user);
                         })
                       ],
                     );
@@ -83,11 +91,12 @@ class _NotesEditorStepWidgetState extends State<NotesEditorStepWidget> {
     throw Exception("User Is Not Logged In.");
   }
 
-  updateNotes(BuildContext context, User user, String notes) async {
+  updateNotes(BuildContext context, User user) async {
     if (user.token == null) {
       throw Exception("User Is Not Logged In.");
     }
-    await widget.notesAPI.notesPut(user.token!, SimpleNote(notes));
+    await widget.notesAPI
+        .notesPut(user.token!, SimpleNote(textEditingController.text));
     setState(() {
       StepStateApi.onSuccess(context);
       NotificationUtils.notify(context, "User Notes Updated !");
