@@ -98,7 +98,7 @@ class _RegisterStepWidgetState extends State<RegisterStepWidget> {
       isLoading = false;
       output = StepOutput(
           timestamp: DateTime.now(),
-          output: "Registered Credential with User : ${user.toString()}",
+          output: "Registered Credential with Generated User Name : ${user.userHandle}",
           successful: true);
       StepStateApi.onSuccess(context);
       this.user = user;

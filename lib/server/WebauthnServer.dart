@@ -97,7 +97,7 @@ class WebauthnServer
   Future notesPut(String token, SimpleNote body) async {
     var uri = '$origin/notes';
     var jsonBody = jsonEncode(body.toJson());
-    await httpPOST(uri, jsonBody, headers: {"Authorization": "Bearer $token"});
+    await httpPUT(uri, jsonBody, headers: {"Authorization": "Bearer $token"});
   }
 
   @override
@@ -115,7 +115,7 @@ class WebauthnServer
   Future preferencesPut(String token, Preferences body) async {
     var uri = '$origin/preferences';
     var jsonBody = jsonEncode(body.toJson());
-    await httpPOST(uri, jsonBody, headers: {"Authorization": "Bearer $token"});
+    await httpPUT(uri, jsonBody, headers: {"Authorization": "Bearer $token"});
   }
 }
 
@@ -157,6 +157,38 @@ mixin HttpMixin {
         reqHeaders.addAll(headers);
       }
       final response = await http.post(
+        Uri.parse(uri),
+        headers: reqHeaders,
+        body: jsonBody, // Example request body
+      );
+
+      if (response.statusCode >= 200 && response.statusCode < 300) {
+        return readResponse(response);
+      } else {
+        throw ServiceValidationException(getErrorMsg(response));
+      }
+    } catch (e) {
+      if (e is ServiceValidationException) {
+        rethrow;
+      }
+
+      // Handle exceptions
+      log('Error posting data: Check server config - $e');
+      throw Exception('Error posting data: Check server config -$e');
+    }
+  }
+
+  Future<Map<String, dynamic>?> httpPUT(String uri, String jsonBody,
+      {Map<String, String>? headers}) async {
+    try {
+      var reqHeaders = {
+        'Content-Type': 'application/json',
+        "ngrok-skip-browser-warning": "0000",
+      };
+      if (headers != null) {
+        reqHeaders.addAll(headers);
+      }
+      final response = await http.put(
         Uri.parse(uri),
         headers: reqHeaders,
         body: jsonBody, // Example request body

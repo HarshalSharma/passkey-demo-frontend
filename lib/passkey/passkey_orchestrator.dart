@@ -127,6 +127,7 @@ class PasskeyOrchestrator implements PasskeyService {
 
   getPublicKeyCreationOptions(
       PublicKeyCredentialCreationOptionsResponse publicKeyCreationOptions) {
+    var base64EncodedUserId = base64.encode(utf8.encode(publicKeyCreationOptions.userId!));
     return {
       "publicKey": {
         "rp": {
@@ -134,7 +135,7 @@ class PasskeyOrchestrator implements PasskeyService {
           "name": publicKeyCreationOptions.rpName
         },
         "user": {
-          "id": publicKeyCreationOptions.userId,
+          "id": base64EncodedUserId,
           "name": publicKeyCreationOptions.userName,
           "displayName": publicKeyCreationOptions.displayName
         },
