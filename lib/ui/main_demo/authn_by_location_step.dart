@@ -99,6 +99,7 @@ class _AuthNByLocationStepWidgetState extends State<AuthNByLocationStepWidget> {
     //success
     setState(() {
       isLoading = false;
+      Provider.of<IdentityState>(context, listen: false).setUser(user!);
       output = StepOutput(
           successful: true,
           timestamp: DateTime.now(),
