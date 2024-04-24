@@ -21,44 +21,48 @@ class _MainDemoState extends State<MainDemo> {
   int _currentStep = 0;
   List<bool> enabledSteps = [];
   List<bool> completedSteps = [];
-  List<Step> stepperSteps = [];
 
   late MainDemoSteps mainDemoSteps;
   late List<DemoStep> steps;
 
   @override
   void initState() {
+    super.initState();
     mainDemoSteps = MainDemoSteps(widget.passkeyService);
     steps = mainDemoSteps.create();
+    createSteps();
   }
 
   void reset() {
     setState(() {
       enabledSteps.clear();
       completedSteps.clear();
-      stepperSteps.clear();
       _currentStep = 0;
+      createSteps();
     });
     Provider.of<IdentityState>(context, listen: false).clearState();
     NotificationUtils.notify(context, "Reset Done, User Logged Out.");
   }
 
-  void createSteps(BuildContext context) {
-    if (stepperSteps.isEmpty) {
-      for (int i = 0; i < steps.length; i++) {
-        enabledSteps.add(steps[i].isEnabled);
-        completedSteps.add(false);
-        stepperSteps.add(buildStep(i, steps[i].title, steps[i].widget, context,
-            getState: getStepState,
-            isActive: isActive,
-            onComplete: onComplete));
-      }
+  void createSteps() {
+    for (int i = 0; i < steps.length; i++) {
+      enabledSteps.add(steps[i].isEnabled);
+      completedSteps.add(false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    createSteps(context);
+    var stepperSteps = steps
+        .asMap()
+        .map((index, e) => MapEntry(
+            index,
+            buildStep(index, steps[index].title, steps[index].widget, context,
+                getState: getStepState,
+                isActive: isActive,
+                onComplete: onComplete)))
+        .values
+        .toList();
     return Column(
       children: [
         Stepper(
@@ -78,7 +82,12 @@ class _MainDemoState extends State<MainDemo> {
                             color: completedSteps[_currentStep]
                                 ? Colors.green
                                 : null),
-                      ))
+                      )),
+                if (completedSteps[_currentStep] && _currentStep == completedSteps.length - 1)
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text("All Finished !", style: AppConstants.textTheme.bodySmall,),
+                  )
               ],
             );
           },
@@ -99,14 +108,16 @@ class _MainDemoState extends State<MainDemo> {
             child: ElevatedButton(
                 onPressed: reset,
                 style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all(Colors.white)),
+                    backgroundColor: MaterialStateProperty.all(Colors.white)),
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.refresh, color: AppConstants.theme.colorScheme.secondary,),
+                      Icon(
+                        Icons.refresh,
+                        color: AppConstants.theme.colorScheme.secondary,
+                      ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
@@ -138,7 +149,9 @@ class _MainDemoState extends State<MainDemo> {
               alignment: Alignment.topLeft,
               child: StepBodyWidget(
                   onSuccess: () {
-                    onComplete(index);
+                    setState(() {
+                      onComplete(index);
+                    });
                   },
                   child: child),
             ),
