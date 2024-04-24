@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:passkey_demo_frontend/location_service.dart';
 import 'package:passkey_demo_frontend/native/web/passkey_native_api_web.dart'
     if (kIsWeb) 'package:passkey_demo_frontend/native/passkey_native_unsupported.dart'
     as platform;
@@ -64,12 +65,34 @@ class PasskeyOrchestrator implements PasskeyService {
         await webauthnAPI.authenticationUserHandleGet(userHandle);
 
     if (publicKeyAuthNOptions == null) {
-      throw Exception("server api didn't responded with matching credentials options.");
+      throw Exception(
+          "server api didn't responded with matching credentials options.");
     }
 
     var options = getPublicKeyAuthNOptions(publicKeyAuthNOptions);
     log(options);
 
+    return await authenticateWithOptions(options);
+  }
+
+  @override
+  Future<User?> autoAuthenticate(Location location) async {
+    /// Obtains the challenge and other options from the server endpoint.
+    var publicKeyAuthNOptions = await webauthnAPI.autoAuthenticationGet(
+        location.latitude, location.longitude);
+
+    if (publicKeyAuthNOptions == null) {
+      throw Exception(
+          "server api didn't responded with matching credentials options.");
+    }
+
+    var options = getPublicKeyAuthNOptions(publicKeyAuthNOptions);
+    log(options);
+
+    return await authenticateWithOptions(options);
+  }
+
+  Future<User?> authenticateWithOptions(options) async {
     /// passes the server options to native api.
     PublicKeyAuthNResponse? loginResponse =
         await _passkeyNativeAPI.login(options);
@@ -85,14 +108,14 @@ class PasskeyOrchestrator implements PasskeyService {
         clientDataJson: loginResponse.clientDataJson!,
         signature: loginResponse.signature!);
     var authenticationResponse =
-        await webauthnAPI.authenticationUserHandlePost(body, userHandle);
+        await webauthnAPI.authenticationUserHandlePost(body, loginResponse.userHandle!);
 
     if (authenticationResponse != null) {
       log("authentication successful");
       return User(
-          userHandle: userHandle,
-          userName: "",
-          displayName: "",
+          userHandle: loginResponse.userHandle!,
+          userName: loginResponse.userHandle!,
+          displayName: loginResponse.userHandle!,
           token: authenticationResponse.accessToken);
     }
     log("authentication failed.");

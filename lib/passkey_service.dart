@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:passkey_demo_frontend/location_service.dart';
+
 import 'passkey/user.dart';
 
 abstract class PasskeyService {
@@ -11,4 +13,9 @@ abstract class PasskeyService {
   ///using the provided userHandle.
   ///
   Future<User?> authenticate(String userHandle);
+
+  ///Authenticates the user device passkey with the web server,
+  ///using the provided user location.
+  ///
+  Future<User?> autoAuthenticate(Location location);
 }

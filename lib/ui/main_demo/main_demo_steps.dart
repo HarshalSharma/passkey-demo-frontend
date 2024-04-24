@@ -43,7 +43,8 @@ class MainDemoSteps {
             passkeyService: passkeyService, notesAPI: remoteServices.notesApi),
 
         //TODO: remove
-        isEnabled: true));
+        // isEnabled: true
+    ));
     steps.add(DemoStep(
         title: "USER MARKS HOME LOCATION",
         widget: HomeLocationUpdateStepWidget(
@@ -52,13 +53,15 @@ class MainDemoSteps {
             locationService: locationService),
 
         //TODO: remove
-        isEnabled: true));
+        // isEnabled: true
+    ));
     steps.add(DemoStep(
         title: "USER LOGOUT",
         widget: const UserLogoutStep(),
 
         //TODO: remove
-        isEnabled: true));
+        // isEnabled: true
+    ));
     steps.add(DemoStep(
         title: "USER LOGIN AT HOME (ANY PREFERRED LOCATION)",
         widget: AuthNByLocationStepWidget(
@@ -70,7 +73,8 @@ class MainDemoSteps {
             passkeyService: passkeyService, notesAPI: remoteServices.notesApi),
 
         //TODO: remove
-        isEnabled: true));
+        // isEnabled: true
+    ));
     return steps;
   }
 }
