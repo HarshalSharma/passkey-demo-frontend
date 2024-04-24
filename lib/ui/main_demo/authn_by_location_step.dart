@@ -31,7 +31,7 @@ class _AuthNByLocationStepWidgetState extends State<AuthNByLocationStepWidget> {
             "which credential can be used and user can authenticate against it, depends on the individual device or security key.\n\n"
             "Even With this, we are still doing MFA complaint login, by User Presence verification with passkeys fingerprint/iris/faceid logins.",
         children: [
-          StepButton("Update Home Location", onTap: loginWithLocation),
+          StepButton("LOGIN AT HOME", onTap: loginWithLocation),
           if (isLoading) const Loading(),
           if (output != null) StepOutputWidget(stepOutput: output!)
         ]);
