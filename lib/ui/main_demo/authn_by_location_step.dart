@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:passkey_demo_frontend/app_state.dart';
 import 'package:passkey_demo_frontend/location_service.dart';
 import 'package:passkey_demo_frontend/passkey/user.dart';
 import 'package:passkey_demo_frontend/passkey_service.dart';
 import 'package:passkey_demo_frontend/ui/utility_widgets/loading_widget.dart';
 import 'package:passkey_demo_frontend/ui/utility_widgets/step_widgets.dart';
+import 'package:provider/provider.dart';
 
 class AuthNByLocationStepWidget extends StatefulWidget {
   final PasskeyService passkeyService;
@@ -20,6 +22,20 @@ class AuthNByLocationStepWidget extends StatefulWidget {
 class _AuthNByLocationStepWidgetState extends State<AuthNByLocationStepWidget> {
   var isLoading = false;
   StepOutput? output;
+
+
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<DemoEventBus>(context, listen: false).events.listen((event) {
+      if(event == DemoEvent.reset) {
+        setState(() {
+          output = null;
+          isLoading = false;
+        });
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

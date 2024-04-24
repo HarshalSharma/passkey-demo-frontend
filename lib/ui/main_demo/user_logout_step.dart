@@ -26,6 +26,7 @@ class _UserLogoutStepState extends State<UserLogoutStep> {
   logout() {
     setState(() {
       Provider.of<IdentityState>(context, listen: false).clearState();
+      Provider.of<DemoEventBus>(context, listen: false).fireEvent(DemoEvent.reset);
       StepStateApi.onSuccess(context);
       NotificationUtils.notify(context, "Logged out the current user.");
     });

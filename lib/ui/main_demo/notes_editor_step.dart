@@ -26,6 +26,19 @@ class _NotesEditorStepWidgetState extends State<NotesEditorStepWidget> {
   SimpleNote? serverNote;
 
   @override
+  void initState() {
+    super.initState();
+    Provider.of<DemoEventBus>(context, listen: false).events.listen((event) {
+      if (event == DemoEvent.reset) {
+        setState(() {
+          textEditingController.text = "";
+          serverNote = null;
+        });
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Consumer<IdentityState>(
         builder: (BuildContext context, IdentityState value, Widget? child) {
@@ -74,7 +87,7 @@ class _NotesEditorStepWidgetState extends State<NotesEditorStepWidget> {
           }
           return child!;
         },
-        child: const SizedBox());
+        child: const Loading());
   }
 
   Future<SimpleNote>? fetchNotes(User user) async {

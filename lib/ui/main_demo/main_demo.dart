@@ -40,7 +40,7 @@ class _MainDemoState extends State<MainDemo> {
         passkeyService: widget.passkeyService,
         locationService: widget.locationService);
     steps = mainDemoSteps.create();
-    createSteps();
+    configureStepStates();
   }
 
   void reset() {
@@ -48,13 +48,14 @@ class _MainDemoState extends State<MainDemo> {
       enabledSteps.clear();
       completedSteps.clear();
       _currentStep = 0;
-      createSteps();
+      configureStepStates();
     });
     Provider.of<IdentityState>(context, listen: false).clearState();
+    Provider.of<DemoEventBus>(context, listen: false).fireEvent(DemoEvent.reset);
     NotificationUtils.notify(context, "Reset Done, User Logged Out.");
   }
 
-  void createSteps() {
+  void configureStepStates() {
     for (int i = 0; i < steps.length; i++) {
       enabledSteps.add(steps[i].isEnabled);
       completedSteps.add(false);

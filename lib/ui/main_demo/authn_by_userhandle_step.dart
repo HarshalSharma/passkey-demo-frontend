@@ -28,6 +28,15 @@ class _AuthNByUserHandleStepWidgetState
   void initState() {
     super.initState();
     userHandleController = TextEditingController();
+    Provider.of<DemoEventBus>(context, listen: false).events.listen((event) {
+      if(event == DemoEvent.reset) {
+        setState(() {
+          output = null;
+          isLoading = false;
+          userHandleController.text = "";
+        });
+      }
+    });
   }
 
   @override

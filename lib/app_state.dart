@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:passkey_demo_frontend/app_constants.dart';
 
@@ -46,6 +48,22 @@ class IdentityState with ChangeNotifier {
 
   void clearState() {
     _user = null;
+    notifyListeners();
+  }
+}
+
+enum DemoEvent {
+  reset
+}
+
+class DemoEventBus with ChangeNotifier {
+
+  final _eventController = StreamController<DemoEvent>.broadcast();
+
+  Stream<DemoEvent> get events => _eventController.stream;
+
+  void fireEvent(DemoEvent event) {
+    _eventController.add(event);
     notifyListeners();
   }
 }

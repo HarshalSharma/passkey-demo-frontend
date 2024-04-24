@@ -21,6 +21,7 @@ void main() async {
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (_) => IdentityState()),
     ChangeNotifierProvider(create: (_) => ServerState()),
+    ChangeNotifierProvider(create: (_) => DemoEventBus()),
   ], child: const RootWidget()));
 }
 

@@ -32,6 +32,20 @@ class _HomeLocationUpdateStepWidgetState
   StepOutput? output;
 
   @override
+  void initState() {
+    super.initState();
+    Provider.of<DemoEventBus>(context, listen: false).events.listen((event) {
+      if (event == DemoEvent.reset) {
+        setState(() {
+          output = null;
+          isLoading = false;
+          location = null;
+        });
+      }
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Consumer<IdentityState>(
         builder: (BuildContext context, IdentityState value, Widget? child) {

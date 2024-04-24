@@ -24,6 +24,21 @@ class _RegisterStepWidgetState extends State<RegisterStepWidget> {
   var isLoading = false;
   User? user;
 
+
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<DemoEventBus>(context, listen: false).events.listen((event) {
+      if (event == DemoEvent.reset) {
+        setState(() {
+          output = null;
+          isLoading = false;
+          user = null;
+        });
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return BasicStep(
@@ -72,7 +87,7 @@ class _RegisterStepWidgetState extends State<RegisterStepWidget> {
       String msg =
           "Error connecting server, please check the server config.\n\n"
           "details - $e";
-      if(e is ServiceValidationException) {
+      if (e is ServiceValidationException) {
         msg = e.toString();
       }
       setState(() {
@@ -98,7 +113,8 @@ class _RegisterStepWidgetState extends State<RegisterStepWidget> {
       isLoading = false;
       output = StepOutput(
           timestamp: DateTime.now(),
-          output: "Registered Credential with Generated User Name : ${user.userHandle}",
+          output:
+              "Registered Credential with Generated User Name : ${user.userHandle}",
           successful: true);
       StepStateApi.onSuccess(context);
       this.user = user;
