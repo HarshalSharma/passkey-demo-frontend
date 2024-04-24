@@ -189,7 +189,10 @@ class HomePage extends StatelessWidget {
             ),
             const NumberedStep(
                 title:
-                    "Flow could be started from any of the active step. i.e Step 1, Step 2 or Step 5."),
+                    "Flow could be started from any of the active steps i.e. \n"
+                        "Step 1 - From first time Registration, \n"
+                        "Step 2 - From authentication with known username, or \n"
+                        "Step 6 - From authentication at preferred location after configuration."),
             MainDemo(
               passkeyService: passkeyService,
             ),

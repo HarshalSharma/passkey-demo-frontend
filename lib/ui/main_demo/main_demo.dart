@@ -72,28 +72,41 @@ class _MainDemoState extends State<MainDemo> {
             return Row(
               children: <Widget>[
                 if (_currentStep < (stepperSteps.length - 1))
-                  TextButton(
+                  ElevatedButton(
+                      style: ButtonStyle(backgroundColor:
+                          MaterialStateProperty.resolveWith((states) {
+                        if (states.contains(MaterialState.disabled)) {
+                          return Colors.white;
+                        }
+                        return AppConstants.theme.primaryColor;
+                      })),
                       onPressed:
                           completedSteps[_currentStep] ? onStepContinue : null,
-                      child: Text(
-                        "continue",
-                        style: GoogleFonts.roboto(
-                            fontSize: 16,
-                            color: completedSteps[_currentStep]
-                                ? Colors.green
-                                : null),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          "continue",
+                          style: AppConstants.textTheme.labelMedium?.copyWith(
+                              color: completedSteps[_currentStep]
+                                  ? null
+                                  : Colors.grey),
+                        ),
                       )),
-                if (completedSteps[_currentStep] && _currentStep == completedSteps.length - 1)
+                if (completedSteps[_currentStep] &&
+                    _currentStep == completedSteps.length - 1)
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Text("All Finished !", style: AppConstants.textTheme.bodySmall,),
+                    child: Text(
+                      "All Finished !",
+                      style: AppConstants.textTheme.bodySmall,
+                    ),
                   )
               ],
             );
           },
           onStepContinue: onStepContinue,
           onStepTapped: (int index) {
-            if (enabledSteps[index]) {
+            if (isActive(index)) {
               setState(() {
                 _currentStep = index;
               });
@@ -160,14 +173,20 @@ class _MainDemoState extends State<MainDemo> {
   }
 
   StepState getStepState(int index) {
-    return completedSteps[index] ? StepState.complete : StepState.indexed;
+    if (completedSteps[index]) {
+      return StepState.complete;
+    }
+    if (isActive(index)) {
+      return StepState.indexed;
+    }
+    return StepState.disabled;
   }
 
   bool isActive(int index) {
     if (index == 0) {
       return enabledSteps[index];
     }
-    return completedSteps[index] || enabledSteps[index];
+    return completedSteps[index - 1] || enabledSteps[index];
   }
 
   onComplete(int index) {

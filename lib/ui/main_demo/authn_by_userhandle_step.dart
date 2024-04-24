@@ -12,10 +12,8 @@ import '../../app_state.dart';
 
 class AuthNByUserHandleStepWidget extends StatefulWidget {
   final PasskeyService passkeyService;
-  final Function(StepOutput) onResult;
 
-  const AuthNByUserHandleStepWidget(
-      {super.key, required this.passkeyService, required this.onResult});
+  const AuthNByUserHandleStepWidget({super.key, required this.passkeyService});
 
   @override
   State<AuthNByUserHandleStepWidget> createState() =>
@@ -24,7 +22,6 @@ class AuthNByUserHandleStepWidget extends StatefulWidget {
 
 class _AuthNByUserHandleStepWidgetState
     extends State<AuthNByUserHandleStepWidget> {
-  String userHandle = "";
   late TextEditingController userHandleController;
   StepOutput? output;
   bool isWaiting = false;
@@ -36,7 +33,6 @@ class _AuthNByUserHandleStepWidgetState
     User? user = Provider.of<IdentityState>(context, listen: false).user;
     if (user != null) {
       userHandleController.text = user.userHandle;
-      userHandle = user.userHandle;
     }
   }
 
@@ -48,23 +44,26 @@ class _AuthNByUserHandleStepWidgetState
           "User would need to provide a UserName/UserHandle, using which passkey LOGIN could be triggered to securely enter into the system.",
       children: [
         Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: TextField(
-            controller: userHandleController,
-            onChanged: (value) {
-              setState(() {
-                userHandle = value;
-              });
-            },
-            decoration: const InputDecoration(
-              labelText: 'Enter UserHandle',
-              border: OutlineInputBorder(),
-            ),
-          ),
-        ),
+            padding: const EdgeInsets.all(8.0),
+            child: Consumer<IdentityState>(
+              builder:
+                  (BuildContext context, IdentityState value, Widget? child) {
+                if (value.user != null) {
+                  userHandleController.text = value.user.userHandle;
+                }
+                return child!;
+              },
+              child: TextField(
+                controller: userHandleController,
+                decoration: const InputDecoration(
+                  labelText: 'Enter UserHandle',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+            )),
         StepButton(
           "LOGIN WITH USERNAME",
-          onTap: userHandle.isNotEmpty
+          onTap: userHandleController.text.isNotEmpty
               ? () {
                   onLogin(context);
                 }
@@ -83,7 +82,7 @@ class _AuthNByUserHandleStepWidgetState
   onLogin(BuildContext context) async {
     User? user;
     try {
-      user = await widget.passkeyService.authenticate(userHandle);
+      user = await widget.passkeyService.authenticate(userHandleController.text);
 
       if (user != null) {
         setState(() {
@@ -92,20 +91,19 @@ class _AuthNByUserHandleStepWidgetState
               timestamp: DateTime.now(),
               output: "${user.userHandle} Successfully Logged In.",
               successful: true);
-          widget.onResult(output!);
-          NotificationUtils.notify(context, "Registered with username - ${user.userHandle}");
+          StepStateApi.onSuccess(context);
+          NotificationUtils.notify(
+              context, "Registered with username - ${user.userHandle}");
         });
       } else {
         output = StepOutput(
             successful: false,
             timestamp: DateTime.now(),
             output: "Error Authenticating User.");
-        widget.onResult(output!);
       }
     } catch (e) {
       output = StepOutput(
           successful: false, timestamp: DateTime.now(), output: e.toString());
-      widget.onResult(output!);
       return;
     }
     setState(() {

@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:passkey_demo_frontend/passkey_service.dart';
-import 'package:passkey_demo_frontend/ui/utility_widgets/notification.dart';
+import 'package:passkey_demo_frontend/ui/main_demo/authn_by_location_step.dart';
+import 'package:passkey_demo_frontend/ui/main_demo/home_location_update_step.dart';
+import 'package:passkey_demo_frontend/ui/main_demo/notes_editor_step.dart';
+import 'package:passkey_demo_frontend/ui/main_demo/user_logout_step.dart';
 import 'package:passkey_demo_frontend/ui/utility_widgets/step_widgets.dart';
 
+import 'authn_by_userhandle_step.dart';
 import 'register_step.dart';
 
 class MainDemoSteps {
@@ -12,32 +16,55 @@ class MainDemoSteps {
 
   List<DemoStep> create() {
     List<DemoStep> steps = [];
-    // steps.add(DemoStep(
-    //     title: "CREATE NEW REGISTRATION",
-    //     widget: RegisterStepWidget(
-    //       passkeyService: passkeyService,
-    //     ),
-    //     isEnabled: true));
+
     steps.add(DemoStep(
         title: "CREATE NEW REGISTRATION",
-        widget: TestStepWidget(),
+        widget: RegisterStepWidget(
+          passkeyService: passkeyService,
+        ),
         isEnabled: true));
     steps.add(DemoStep(
-      title: "LOGIN WITH USERNAME",
-      widget: const TestStepWidget(),
-    ));
+        title: "LOGIN WITH USERNAME",
+        widget: AuthNByUserHandleStepWidget(
+          passkeyService: passkeyService,
+        ),
+        isEnabled: true));
     steps.add(DemoStep(
-      title: "USER USES APIS",
-      widget: const TestStepWidget(),
-    ));
+        title: "USER USES SECURE APIS",
+        widget: NotesEditorStepWidget(
+          passkeyService: passkeyService,
+        ),
+
+        //TODO: remove
+        isEnabled: true));
     steps.add(DemoStep(
-      title: "USER UPDATES HOME LOCATION",
-      widget: const TestStepWidget(),
-    ));
+        title: "USER MARKS HOME LOCATION",
+        widget: HomeLocationUpdateStepWidget(
+          passkeyService: passkeyService,
+        ),
+
+        //TODO: remove
+        isEnabled: true));
     steps.add(DemoStep(
-      title: "USER LOGOUT",
-      widget: const TestStepWidget(),
-    ));
+        title: "USER LOGOUT",
+        widget: const UserLogoutStep(),
+
+        //TODO: remove
+        isEnabled: true));
+    steps.add(DemoStep(
+        title: "USER LOGIN AT HOME (ANY PREFERRED LOCATION)",
+        widget: AuthNByLocationStepWidget(
+          passkeyService: passkeyService,
+        ),
+        isEnabled: true));
+    steps.add(DemoStep(
+        title: "USER USES SECURE APIS",
+        widget: NotesEditorStepWidget(
+          passkeyService: passkeyService,
+        ),
+
+        //TODO: remove
+        isEnabled: true));
     return steps;
   }
 }

@@ -72,7 +72,7 @@ class _RegisterStepWidgetState extends State<RegisterStepWidget> {
               timestamp: DateTime.now(),
               output: "Registered Credential with User : ${user.toString()}",
               successful: true);
-          context.findAncestorWidgetOfExactType<StepBodyWidget>()?.onSuccess();
+          StepStateApi.onSuccess(context);
           this.user = user;
           NotificationUtils.notify(
               context, "Registered with username - ${user.userHandle}");

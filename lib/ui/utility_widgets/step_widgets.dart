@@ -174,11 +174,7 @@ class NumberedStep extends StatelessWidget {
   final List<Widget>? children;
 
   const NumberedStep(
-      {super.key,
-      this.number,
-      this.title,
-      this.description,
-      this.children});
+      {super.key, this.number, this.title, this.description, this.children});
 
   @override
   Widget build(BuildContext context) {
@@ -239,5 +235,11 @@ class StepBodyWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return child;
+  }
+}
+
+class StepStateApi {
+  static onSuccess(BuildContext context) {
+    context.findAncestorWidgetOfExactType<StepBodyWidget>()?.onSuccess();
   }
 }
