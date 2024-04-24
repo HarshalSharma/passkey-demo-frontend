@@ -40,17 +40,14 @@ class _RegisterStepWidgetState extends State<RegisterStepWidget> {
         if (user != null)
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Column(
-              children: [
-                Text(
-                  "Click to copy your username - ",
-                  style: AppConstants.textTheme.bodyMedium,
-                ),
-                CodeWidget(
-                  "${user?.userHandle}",
-                ),
-              ],
+            child: Text(
+              "Click to copy your username - ",
+              style: AppConstants.textTheme.bodyMedium,
             ),
+          ),
+        if (user != null)
+          CodeWidget(
+            "${user?.userHandle}",
           ),
         if (isLoading == true)
           const Padding(
@@ -72,14 +69,16 @@ class _RegisterStepWidgetState extends State<RegisterStepWidget> {
     try {
       user = await widget.passkeyService.enroll();
     } catch (e) {
+      String msg =
+          "Error connecting server, please check the server config.\n\n"
+          "details - $e";
+      if(e is ServiceValidationException) {
+        msg = e.toString();
+      }
       setState(() {
         isLoading = false;
         output = StepOutput(
-            successful: false,
-            timestamp: DateTime.now(),
-            output:
-                "Error connecting server, please check the server config.\n\n"
-                "details - $e");
+            successful: false, timestamp: DateTime.now(), output: msg);
       });
       return;
     }
@@ -89,8 +88,7 @@ class _RegisterStepWidgetState extends State<RegisterStepWidget> {
       output = StepOutput(
           successful: false,
           timestamp: DateTime.now(),
-          output:
-              "Error Registering, please check backend service configuration.");
+          output: "Error Registering the user. please try again.");
       return;
     }
 

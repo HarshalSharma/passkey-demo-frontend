@@ -57,13 +57,17 @@ class _AuthNByLocationStepWidgetState extends State<AuthNByLocationStepWidget> {
     //validate if authentication is successful.
     User? user;
     try {
-      user =
-          await widget.passkeyService.autoAuthenticate(location);
+      user = await widget.passkeyService.autoAuthenticate(location);
     } catch (e) {
+      var msg =
+          "Error logging-in the user, please verify the server configuration.\n"
+          "Error details- $e";
+      if (e is ServiceValidationException) {
+        msg = e.toString();
+      }
       setState(() {
         isLoading = false;
-        output = StepOutput(
-            timestamp: DateTime.now(), output: "Error: ${e.toString()}");
+        output = StepOutput(timestamp: DateTime.now(), output: msg);
       });
       return;
     }

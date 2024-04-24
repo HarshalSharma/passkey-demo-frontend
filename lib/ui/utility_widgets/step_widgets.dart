@@ -24,15 +24,17 @@ class BasicStep extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: Text(
               title,
-              style:
-                  GoogleFonts.roboto(fontWeight: FontWeight.bold, fontSize: 18),
+              style: AppConstants.textTheme.titleSmall,
+              // style:
+              //     GoogleFonts.roboto(fontWeight: FontWeight.bold, fontSize: 18),
             ),
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
               description,
-              style: GoogleFonts.roboto(fontSize: 18),
+              style: AppConstants.textTheme.bodyMedium,
+              // style: GoogleFonts.roboto(fontSize: 18),
             ),
           ),
           if (children != null)

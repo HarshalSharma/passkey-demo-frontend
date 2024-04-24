@@ -88,12 +88,13 @@ class _HomeLocationUpdateStepWidgetState
       await widget.preferencesAPI.preferencesPut(user.token!,
           Preferences(homeLat: location.latitude, homeLog: location.longitude));
     } catch (e) {
+      var msg = "Error updating location on the server, check server config.";
+      if (e is ServiceValidationException) {
+        msg = e.toString();
+      }
       setState(() {
         isLoading = false;
-        output = StepOutput(
-            timestamp: DateTime.now(),
-            output:
-                "Error updating location on the server, check server config.");
+        output = StepOutput(timestamp: DateTime.now(), output: msg);
       });
       return;
     }

@@ -86,14 +86,16 @@ class _AuthNByUserHandleStepWidgetState
       user =
           await widget.passkeyService.authenticate(userHandleController.text);
     } catch (e) {
+      var msg =
+          "Error logging-in the user, please verify the server configuration.\n"
+          "Error details- $e";
+      if (e is ServiceValidationException) {
+        msg = e.toString();
+      }
       setState(() {
         isLoading = false;
         output = StepOutput(
-            successful: false,
-            timestamp: DateTime.now(),
-            output:
-                "Error logging-in the user, please verify the server configuration.\n"
-                "Error details- $e");
+            successful: false, timestamp: DateTime.now(), output: msg);
       });
       return;
     }

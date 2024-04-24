@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:http/http.dart' as http;
 import 'package:passkey_demo_frontend/app_state.dart';
+import 'package:passkey_demo_frontend/passkey_service.dart';
 import 'package:passkey_demo_frontend/server/api/notes_api.dart';
 import 'package:passkey_demo_frontend/server/api/preferences_api.dart';
 import 'package:passkey_demo_frontend/server/api/webauthn_api.dart';
@@ -84,7 +85,8 @@ class WebauthnServer
   @override
   Future<SimpleNote> notesGet(String token) async {
     var uri = '$origin/notes';
-    var jsonMap = await httpGET(uri, headers: {"Authorization": "Bearer $token"});
+    var jsonMap =
+        await httpGET(uri, headers: {"Authorization": "Bearer $token"});
     if (jsonMap == null) {
       return SimpleNote("");
     }
@@ -101,7 +103,8 @@ class WebauthnServer
   @override
   Future<Preferences?> preferencesGet(String token) async {
     var uri = '$origin/preferences';
-    var jsonMap = await httpGET(uri, headers: {"Authorization": "Bearer $token"});
+    var jsonMap =
+        await httpGET(uri, headers: {"Authorization": "Bearer $token"});
     if (jsonMap == null) {
       return null;
     }
@@ -131,14 +134,15 @@ mixin HttpMixin {
       if (response.statusCode >= 200 && response.statusCode < 300) {
         return readResponse(response);
       } else {
-        // Request failed, handle error
-        log('Failed to fetch data: ${response.statusCode}');
-        throw Exception('Failed to fetch data: ${response.statusCode}');
+        throw ServiceValidationException(getErrorMsg(response));
       }
     } catch (e) {
+      if (e is ServiceValidationException) {
+        rethrow;
+      }
       // Handle exceptions
-      log('Error fetching data: $e');
-      throw Exception('Error fetching data: $e');
+      log('Error fetching data: Check Server Config - $e');
+      throw Exception('Error fetching data: Check Server Config - $e');
     }
   }
 
@@ -161,23 +165,35 @@ mixin HttpMixin {
       if (response.statusCode >= 200 && response.statusCode < 300) {
         return readResponse(response);
       } else {
-        // Request failed, handle error
-        log('Failed to post data: ${response.statusCode}');
-        throw Exception('Failed to post data: ${response.statusCode}');
+        throw ServiceValidationException(getErrorMsg(response));
       }
     } catch (e) {
+      if (e is ServiceValidationException) {
+        rethrow;
+      }
+
       // Handle exceptions
-      log('Error posting data: $e');
-      throw Exception('Error posting data: $e');
+      log('Error posting data: Check server config - $e');
+      throw Exception('Error posting data: Check server config -$e');
     }
   }
 
-  readResponse(http.Response response) {
+  Map<String, dynamic> readResponse(http.Response response) {
     if (response.body.isNotEmpty) {
       // Request was successful, parse response
       return jsonDecode(response.body);
     } else {
       return {};
     }
+  }
+
+  String getErrorMsg(http.Response response) {
+    var errorResponse = readResponse(response);
+    // Request failed, handle error
+    log('Failed to fetch data: ${response.statusCode}');
+    if (errorResponse.containsKey("error")) {
+      return errorResponse["description"];
+    }
+    return response.body;
   }
 }
