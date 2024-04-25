@@ -73,7 +73,7 @@ class PasskeyOrchestrator implements PasskeyService {
     var options = getPublicKeyAuthNOptions(publicKeyAuthNOptions);
     log(options);
 
-    return await authenticateWithOptions(options);
+    return await authenticateWithOptions(options, userHandle: userHandle);
   }
 
   @override
@@ -93,7 +93,7 @@ class PasskeyOrchestrator implements PasskeyService {
     return await authenticateWithOptions(options);
   }
 
-  Future<User?> authenticateWithOptions(options) async {
+  Future<User?> authenticateWithOptions(options, {String? userHandle}) async {
     /// passes the server options to native api.
     PublicKeyAuthNResponse? loginResponse =
         await _passkeyNativeAPI.login(options);
@@ -102,7 +102,10 @@ class PasskeyOrchestrator implements PasskeyService {
       throw Exception("native api didn't found credential to authenticate.");
     }
 
-    String userHandle = String.fromCharCodes(base64Decode(loginResponse.userHandle!));
+    if (userHandle == null || userHandle.isEmpty) {
+      userHandle =
+          String.fromCharCodes(base64Decode(loginResponse.userHandle!));
+    }
 
     // it is not mandatory to provide credential id in login response, as server would anyway know it.
     AuthenticationRequest body = AuthenticationRequest(
@@ -127,7 +130,8 @@ class PasskeyOrchestrator implements PasskeyService {
 
   getPublicKeyCreationOptions(
       PublicKeyCredentialCreationOptionsResponse publicKeyCreationOptions) {
-    var base64EncodedUserId = base64.encode(utf8.encode(publicKeyCreationOptions.userId!));
+    var base64EncodedUserId =
+        base64.encode(utf8.encode(publicKeyCreationOptions.userId!));
     return {
       "publicKey": {
         "rp": {
