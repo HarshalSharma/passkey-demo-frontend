@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:http/http.dart' as http;
+import 'package:passkey_demo_frontend/app_constants.dart';
 import 'package:passkey_demo_frontend/app_state.dart';
 import 'package:passkey_demo_frontend/passkey_service.dart';
 import 'package:passkey_demo_frontend/server/api/notes_api.dart';
@@ -141,8 +142,9 @@ mixin HttpMixin {
         rethrow;
       }
       // Handle exceptions
-      log('Error fetching data: Check Server Config - $e');
-      throw Exception('Error fetching data: Check Server Config - $e');
+      String maskedErr = maskError(e.toString());
+      log('Error fetching data: Check Server Config - $maskedErr');
+      throw Exception('Error fetching data: Check Server Config - $maskedErr');
     }
   }
 
@@ -173,8 +175,9 @@ mixin HttpMixin {
       }
 
       // Handle exceptions
-      log('Error posting data: Check server config - $e');
-      throw Exception('Error posting data: Check server config -$e');
+      String maskedErr = maskError(e.toString());
+      log('Error posting data: Check server config - $maskedErr');
+      throw Exception('Error posting data: Check server config -$maskedErr');
     }
   }
 
@@ -205,8 +208,9 @@ mixin HttpMixin {
       }
 
       // Handle exceptions
-      log('Error posting data: Check server config - $e');
-      throw Exception('Error posting data: Check server config -$e');
+      String maskedErr = maskError(e.toString());
+      log('Error posting data: Check server config - $maskedErr');
+      throw Exception('Error posting data: Check server config -$maskedErr');
     }
   }
 
@@ -227,5 +231,9 @@ mixin HttpMixin {
       return errorResponse["description"];
     }
     return response.body;
+  }
+
+  String maskError(String err) {
+    return err.replaceAll(AppConstants.defaultServer, "DEFAULT_SERVER");
   }
 }
