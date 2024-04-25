@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:passkey_demo_frontend/app_constants.dart';
-import 'package:provider/provider.dart';
 
 class Loading extends StatelessWidget {
   final Widget? child;
@@ -19,7 +18,7 @@ class Loading extends StatelessWidget {
           color: AppConstants.theme.colorScheme.secondary,
         ),
         Padding(
-          padding: EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16.0),
           child: Text(
             "loading",
             style: GoogleFonts.jetBrainsMono(color: AppConstants.theme.colorScheme.primary),

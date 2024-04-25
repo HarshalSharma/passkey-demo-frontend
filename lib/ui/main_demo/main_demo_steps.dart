@@ -68,7 +68,7 @@ class MainDemoSteps {
             passkeyService: passkeyService, locationService: locationService),
         isEnabled: true));
     steps.add(DemoStep(
-        title: "USER USES SECURE APIS",
+        title: "USER USES SECURE APIS [VERIFY NOTES]",
         widget: NotesEditorStepWidget(
             passkeyService: passkeyService, notesAPI: remoteServices.notesApi),
 

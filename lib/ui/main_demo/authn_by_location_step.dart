@@ -103,7 +103,7 @@ class _AuthNByLocationStepWidgetState extends State<AuthNByLocationStepWidget> {
       output = StepOutput(
           successful: true,
           timestamp: DateTime.now(),
-          output: "User ${user?.userHandle} Successfully logged In.");
+          output: "User ${user.userHandle} Successfully logged In.");
       StepStateApi.onSuccess(context);
     });
   }

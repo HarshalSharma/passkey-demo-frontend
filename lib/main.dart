@@ -49,6 +49,7 @@ class _RootWidgetState extends State<RootWidget> {
 
   @override
   Widget build(BuildContext context) {
+    Size screenSize = MediaQuery.of(context).size;
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Seamless Authentication Suite Demo',
@@ -57,9 +58,7 @@ class _RootWidgetState extends State<RootWidget> {
           appBar: AppBar(
             title: Text(
               "Seamless Authentication Suite Demo",
-              style: AppConstants.textTheme.titleLarge,
-              softWrap: true,
-              maxLines: 2,
+              style: screenSize.width > 500 ? AppConstants.textTheme.titleLarge : AppConstants.textTheme.titleSmall,
             ),
             leading: const Icon(Icons.vpn_key),
             backgroundColor: Colors.white,
