@@ -119,9 +119,9 @@ class PasskeyOrchestrator implements PasskeyService {
     if (authenticationResponse != null) {
       log("authentication successful");
       return User(
-          userHandle: userHandle,
-          userName: userHandle,
-          displayName: userHandle,
+          userHandle: authenticationResponse.userHandle,
+          userName: authenticationResponse.userHandle,
+          displayName: authenticationResponse.userHandle,
           token: authenticationResponse.accessToken);
     }
     log("authentication failed.");
